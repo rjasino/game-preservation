@@ -94,9 +94,9 @@ MAIN_GAME_CATEGORY: int = 0
 OAUTH_TOKEN_URL: str = "https://id.twitch.tv/oauth2/token"
 
 
-def _load_dotenv(script_dir: Path) -> None:
+def _load_dotenv(search_dir: Path) -> None:
     """Attempt to load a ``.env`` file if ``python-dotenv`` is installed."""
-    env_path = script_dir / ".env"
+    env_path = search_dir / ".env"
     if not env_path.is_file():
         return
     try:
@@ -428,15 +428,15 @@ def _parse_args() -> argparse.Namespace:
         epilog=(
             "examples:\n"
             "  # Use Client-ID + Client Secret (script auto-generates the token)\n"
-            "  python fetch_ps_vita_exclusives.py --client-id YOUR_ID --client-secret YOUR_SECRET\n\n"
+            "  python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id YOUR_ID --client-secret YOUR_SECRET\n\n"
             "  # Use a pre-existing Bearer Token\n"
-            "  python fetch_ps_vita_exclusives.py --client-id YOUR_ID --token YOUR_TOKEN\n\n"
+            "  python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id YOUR_ID --token YOUR_TOKEN\n\n"
             "  # Japan-only exclusives\n"
-            "  python fetch_ps_vita_exclusives.py --client-id YOUR_ID --client-secret YOUR_SECRET --japan-only\n\n"
+            "  python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id YOUR_ID --client-secret YOUR_SECRET --japan-only\n\n"
             "  # Environment variables (no CLI flags needed)\n"
             "  set IGDB_CLIENT_ID=YOUR_ID\n"
             "  set IGDB_CLIENT_SECRET=YOUR_SECRET\n"
-            "  python fetch_ps_vita_exclusives.py\n"
+            "  python .asd/artifacts/fetch_ps_vita_exclusives.py\n"
         ),
     )
 
@@ -476,7 +476,8 @@ def _parse_args() -> argparse.Namespace:
         default="ps_vita_exclusives.json",
         help=(
             "Output JSON file path. "
-            "Defaults to 'ps_vita_exclusives.json' in the script folder."
+            "Relative paths are resolved from '.asd/artifacts'. "
+            "Defaults to '.asd/artifacts/ps_vita_exclusives.json'."
         ),
     )
     parser.add_argument(
@@ -490,10 +491,12 @@ def _parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = _parse_args()
-    script_dir = Path(__file__).resolve().parent
+    artifact_dir = Path(__file__).resolve().parent
+    project_root = artifact_dir.parent.parent
 
-    # Load .env if it exists
-    _load_dotenv(script_dir)
+    # Load .env from the project root first, then from the artifact folder.
+    _load_dotenv(project_root)
+    _load_dotenv(artifact_dir)
 
     # Resolve credentials (exits on failure)
     client_id, token = resolve_credentials(args)
@@ -528,7 +531,11 @@ def main() -> None:
     # ------------------------------------------------------------------
     # 3. Write JSON output
     # ------------------------------------------------------------------
-    output_path = script_dir / args.output
+    output_path = Path(args.output)
+    if not output_path.is_absolute():
+        output_path = artifact_dir / output_path
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(
             {

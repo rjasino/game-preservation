@@ -5,7 +5,8 @@
   - commands (preferrable for OpenCode)
   - skills
 - .asd (My Own Workflow Main Folder)
-  - docs (artifacts)
+  - artifacts (generated scripts and generated output files)
+  - docs
   - templates
   - rules
 - docs (input docs)

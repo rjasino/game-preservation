@@ -36,6 +36,7 @@ Create variables for tool listing and for pass and fail flag.
 - Filename should be `tool-check` with appropriate file extension.
   - `.ps1` for Powershell
   - `.sh` for Bash and Zsh
+- Generate the tool-check script in `.asd/artifacts`.
 - Use color coding if possible.
 - Follow this logging display:
 

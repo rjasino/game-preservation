@@ -1,7 +1,7 @@
 # PS Vita Exclusives – IGDB Fetcher
 
 Fetches **PS Vita exclusive** games from the [IGDB API](https://api-docs.igdb.com/) and
-saves the results as a JSON file in the same folder.
+saves generated scripts and data under `.asd/artifacts`.
 
 ## What It Does
 
@@ -16,11 +16,11 @@ saves the results as a JSON file in the same folder.
 
 ## Prerequisites
 
-| Requirement  | How to get it                                                          |
-| ------------ | ---------------------------------------------------------------------- |
-| **Python**   | 3.7 or newer.  Download from [python.org](https://www.python.org/)     |
-| **requests** | `pip install requests`                                                 |
-| **python-dotenv** *(optional)* | `pip install python-dotenv` – only needed if you use a `.env` file |
+| Requirement                    | How to get it                                                      |
+| ------------------------------ | ------------------------------------------------------------------ |
+| **Python**                     | 3.7 or newer. Download from [python.org](https://www.python.org/)  |
+| **requests**                   | `pip install requests`                                             |
+| **python-dotenv** _(optional)_ | `pip install python-dotenv` – only needed if you use a `.env` file |
 
 ### How to install Python (Windows)
 
@@ -41,11 +41,11 @@ IGDB uses **Twitch OAuth**. You need to register a Twitch application at
 [dev.twitch.tv](https://dev.twitch.tv/docs/authentication/register-app/)
 to get your credentials. There are **three** values involved:
 
-| Credential | What it is | Used for |
-|---|---|---|
-| **Client-ID** | Public identifier of your Twitch app | Sent in every API request |
-| **Client Secret** | Private key *(keep this safe)* | Exchanged **once** to generate a token |
-| **Bearer Token** | A temporary access token | Sent as `Authorization: Bearer <...>` in every request |
+| Credential        | What it is                           | Used for                                               |
+| ----------------- | ------------------------------------ | ------------------------------------------------------ |
+| **Client-ID**     | Public identifier of your Twitch app | Sent in every API request                              |
+| **Client Secret** | Private key _(keep this safe)_       | Exchanged **once** to generate a token                 |
+| **Bearer Token**  | A temporary access token             | Sent as `Authorization: Bearer <...>` in every request |
 
 > **The Client Secret is NOT the Bearer Token.**  
 > The secret is used just one time to obtain a token. Only the token (and the
@@ -57,7 +57,7 @@ The script will **auto-generate** the token for you so you never have to deal
 with tokens manually:
 
 ```bash
-python fetch_ps_vita_exclusives.py --client-id YOUR_CLIENT_ID --client-secret YOUR_CLIENT_SECRET
+python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id YOUR_CLIENT_ID --client-secret YOUR_CLIENT_SECRET
 ```
 
 ### Alternative: provide a pre-existing Bearer Token
@@ -66,12 +66,12 @@ If you already have a token (e.g. from the IGDB website or a previous OAuth
 exchange), supply it directly:
 
 ```bash
-python fetch_ps_vita_exclusives.py --client-id YOUR_CLIENT_ID --token YOUR_ACCESS_TOKEN
+python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id YOUR_CLIENT_ID --token YOUR_ACCESS_TOKEN
 ```
 
 ### Environment variables / `.env` file
 
-Create a `.env` file in the script's folder:
+Create a `.env` file in the project root:
 
 ```
 IGDB_CLIENT_ID=YOUR_CLIENT_ID
@@ -83,40 +83,41 @@ Or set them in your shell:
 ```cmd
 set IGDB_CLIENT_ID=YOUR_CLIENT_ID
 set IGDB_CLIENT_SECRET=YOUR_CLIENT_SECRET
-python fetch_ps_vita_exclusives.py
+python .asd/artifacts/fetch_ps_vita_exclusives.py
 ```
 
 The script resolves credentials in this order: **CLI flags → env vars → `.env`**.
+It checks `.env` in the project root first, then `.asd/artifacts`.
 
 ## Usage
 
 ```bash
 # Auto-generate token from Client Secret (recommended)
-python fetch_ps_vita_exclusives.py --client-id abc --client-secret xyz
+python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id abc --client-secret xyz
 
 # Use a manually-obtained Bearer Token
-python fetch_ps_vita_exclusives.py --client-id abc --token xyz
+python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id abc --token xyz
 
 # Japan-only exclusives (no English release)
-python fetch_ps_vita_exclusives.py --client-id abc --client-secret xyz --japan-only
+python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id abc --client-secret xyz --japan-only
 
-# Custom output path
-python fetch_ps_vita_exclusives.py --client-id abc --client-secret xyz --output vita_games.json
+# Custom output path inside the artifact folder
+python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id abc --client-secret xyz --output vita_games.json
 
 # Increase HTTP timeout (useful on slow connections)
-python fetch_ps_vita_exclusives.py --client-id abc --client-secret xyz --timeout 60
+python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id abc --client-secret xyz --timeout 60
 ```
 
 ### Full argument reference
 
-| Flag               | Description                                          | Env var               |
-| ------------------ | ---------------------------------------------------- | --------------------- |
-| `--client-id`      | IGDB / Twitch Client-ID **(required)**               | `IGDB_CLIENT_ID`      |
-| `--client-secret`  | Twitch Client Secret – script auto-generates a token | `IGDB_CLIENT_SECRET`  |
-| `--token`          | Pre-existing Bearer Token *(optional if secret given)* | `IGDB_TOKEN`         |
-| `--japan-only`     | Japan-exclusive Vita games (no English release)      | —                     |
-| `--output`         | Output JSON file path *(default: `ps_vita_exclusives.json`)* | —            |
-| `--timeout`        | HTTP request timeout in seconds *(default: 30)*      | —                     |
+| Flag              | Description                                                                                    | Env var              |
+| ----------------- | ---------------------------------------------------------------------------------------------- | -------------------- |
+| `--client-id`     | IGDB / Twitch Client-ID **(required)**                                                         | `IGDB_CLIENT_ID`     |
+| `--client-secret` | Twitch Client Secret – script auto-generates a token                                           | `IGDB_CLIENT_SECRET` |
+| `--token`         | Pre-existing Bearer Token _(optional if secret given)_                                         | `IGDB_TOKEN`         |
+| `--japan-only`    | Japan-exclusive Vita games (no English release)                                                | —                    |
+| `--output`        | Output JSON file path _(default: `.asd/artifacts/ps_vita_exclusives.json` for relative paths)_ | —                    |
+| `--timeout`       | HTTP request timeout in seconds _(default: 30)_                                                | —                    |
 
 > You must provide **either** `--client-secret` **or** `--token` (or their env
 > var equivalents). The script will auto-detect which one you used.
@@ -168,13 +169,13 @@ The JSON file contains a `metadata` block and a `games` array:
 
 The script applies these criteria sequentially:
 
-| Step | Criterion                                             | Where applied         |
-| ---- | ----------------------------------------------------- | --------------------- |
-| 1    | Platforms = `[46]` **only** (PS Vita exclusive)       | IGDB server-side      |
-| 2    | `category = 0` (main game, not DLC / bundle)          | IGDB server-side      |
-| 3    | `version_parent = null` (not a port or remaster)      | IGDB server-side      |
-| 4    | Released in Europe, North America, or Australia       | Client-side filter    |
-| 5\*   | Released in Japan **and not** in English regions      | Client-side filter    |
+| Step | Criterion                                        | Where applied      |
+| ---- | ------------------------------------------------ | ------------------ |
+| 1    | Platforms = `[46]` **only** (PS Vita exclusive)  | IGDB server-side   |
+| 2    | `category = 0` (main game, not DLC / bundle)     | IGDB server-side   |
+| 3    | `version_parent = null` (not a port or remaster) | IGDB server-side   |
+| 4    | Released in Europe, North America, or Australia  | Client-side filter |
+| 5\*  | Released in Japan **and not** in English regions | Client-side filter |
 
 \* Only when `--japan-only` is used.
 

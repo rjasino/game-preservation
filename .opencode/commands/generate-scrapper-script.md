@@ -8,11 +8,11 @@ Follow these steps when generating the script
 
 ### Step 1:
 
-Write the python script base on user request. Generate the file at the root of the project.
+Write the python script base on user request. Generate the file in `.asd/artifacts`.
 
 ### Step 2:
 
-Write `README.md` on how to use the script. Generate this file at the root of the project.
+Write `README.md` on how to use the script. Keep this file at the root of the project and make it reference `.asd/artifacts` as the generated artifact location.
 
 ## Rules
 

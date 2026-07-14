@@ -2,10 +2,8 @@ import { Suspense } from "react";
 import {
   queryGames,
   getUniqueGenres,
-  getUniquePlatforms,
   getUniqueDevelopers,
   getUniquePublishers,
-  getCategoryCounts,
   getRiskLevelCounts,
 } from "@/lib/data";
 import type { EndangermentLevel } from "@/lib/types";
@@ -14,18 +12,29 @@ import { GameTable } from "@/components/game-table";
 import { SearchInput } from "@/components/search-input";
 import { FilterBar } from "@/components/filter-bar";
 import { SortSelect } from "@/components/sort-select";
+import { PaginationControls } from "@/components/pagination-controls";
+
+function parsePage(raw: string | undefined): number {
+  const n = Number(raw);
+  return Number.isFinite(n) && n > 0 ? n : 1;
+}
+
+function parseSize(raw: string | undefined): number {
+  const n = Number(raw);
+  return [10, 20, 50, 100].includes(n) ? n : 10;
+}
 
 interface PageProps {
   searchParams: Promise<{
     q?: string;
     genre?: string;
-    platform?: string;
-    contentType?: string;
     developer?: string;
     publisher?: string;
     riskLevel?: string;
     sort?: string;
     order?: string;
+    page?: string;
+    size?: string;
   }>;
 }
 
@@ -34,24 +43,24 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   const {
     q = "",
     genre = "",
-    platform = "",
-    contentType = "",
     developer = "",
     publisher = "",
     riskLevel = "",
     sort = "",
     order = "",
+    page: pageRaw,
+    size: sizeRaw,
   } = params;
 
-  // Load filter options and risk counts from data (these are lightweight)
+  const page = parsePage(pageRaw);
+  const pageSize = parseSize(sizeRaw);
+
+  // Load filter options and risk counts
   const genres = await getUniqueGenres();
-  const platforms = await getUniquePlatforms();
   const developers = await getUniqueDevelopers();
   const publishers = await getUniquePublishers();
-  const categoryCounts = await getCategoryCounts();
   const riskCounts = await getRiskLevelCounts();
 
-  const hasDlc = categoryCounts.dlc > 0;
   const totalGames =
     riskCounts.Critical +
     riskCounts.High +
@@ -59,11 +68,9 @@ export default async function DashboardPage({ searchParams }: PageProps) {
     riskCounts.Low +
     riskCounts.Minimal;
 
-  // Count active filters for the summary
+  // Count active filters
   const activeFilters = [
     genre,
-    platform,
-    contentType,
     developer,
     publisher,
     riskLevel,
@@ -122,17 +129,11 @@ export default async function DashboardPage({ searchParams }: PageProps) {
 
       {/* Search + Filter Bar */}
       <div className="mb-6 space-y-4">
-        {/* Title search */}
         <SearchInput defaultValue={q} />
-
-        {/* All filters */}
         <FilterBar
           genres={genres}
-          platforms={platforms}
           developers={developers}
           publishers={publishers}
-          categoryCounts={categoryCounts}
-          hasDlc={hasDlc}
           riskLevelCounts={riskCounts}
         />
       </div>
@@ -142,13 +143,13 @@ export default async function DashboardPage({ searchParams }: PageProps) {
         <GamesList
           search={q}
           genre={genre}
-          platform={platform}
-          contentType={contentType}
           developer={developer}
           publisher={publisher}
           riskLevel={riskLevel}
           sort={sort}
           order={order}
+          page={page}
+          pageSize={pageSize}
           activeFilters={activeFilters}
           totalGames={totalGames}
         />
@@ -182,25 +183,25 @@ function buildParamString(
 async function GamesList({
   search,
   genre,
-  platform,
-  contentType,
   developer,
   publisher,
   riskLevel,
   sort,
   order,
+  page,
+  pageSize,
   activeFilters,
   totalGames,
 }: {
   search: string;
   genre: string;
-  platform: string;
-  contentType: string;
   developer: string;
   publisher: string;
   riskLevel: string;
   sort: string;
   order: string;
+  page: number;
+  pageSize: number;
   activeFilters: number;
   totalGames: number;
 }) {
@@ -211,13 +212,13 @@ async function GamesList({
     result = await queryGames({
       search,
       genre: genre || undefined,
-      platform: platform || undefined,
-      contentType: contentType || undefined,
       developer: developer || undefined,
       publisher: publisher || undefined,
       riskLevel: (riskLevel as EndangermentLevel) || undefined,
       sort: (sort as "title" | "release_date" | "risk_score") || undefined,
       order: (order as "asc" | "desc") || undefined,
+      page,
+      pageSize,
     });
   } catch (err) {
     errorMessage =
@@ -237,7 +238,7 @@ async function GamesList({
       {/* Sort controls + count */}
       <div className="mb-4 flex items-center justify-between">
         <p className="text-xs text-zinc-400">
-          Showing {result.total} game{result.total !== 1 ? "s" : ""}
+          {result.total} game{result.total !== 1 ? "s" : ""}
           {activeFilters > 0 && (
             <span className="ml-1">
               (filtered from {totalGames.toLocaleString()})
@@ -248,6 +249,18 @@ async function GamesList({
       </div>
 
       <GameTable games={result.games} />
+
+      {/* Pagination */}
+      {result.totalPages > 1 && (
+        <div className="mt-6">
+          <PaginationControls
+            currentPage={result.page}
+            totalPages={result.totalPages}
+            pageSize={result.pageSize}
+            total={result.total}
+          />
+        </div>
+      )}
     </>
   );
 }

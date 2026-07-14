@@ -190,13 +190,9 @@ export interface GameQuery {
   search?: string;
   /** Single genre filter (exact match). */
   genre?: string;
-  /** Single platform filter (exact match). */
-  platform?: string;
-  /** Content type: "base" (category 0) or "dlc" (categories 1-4). */
-  contentType?: string;
-  /** Developer search (case-insensitive substring match). */
+  /** Developer filter (exact match within the game's developers array). */
   developer?: string;
-  /** Publisher search (case-insensitive substring match). */
+  /** Publisher filter (exact match within the game's publishers array). */
   publisher?: string;
   /** Risk level filter (exact match on endangerment level). */
   riskLevel?: EndangermentLevel;
@@ -204,11 +200,22 @@ export interface GameQuery {
   sort?: "title" | "release_date" | "risk_score";
   /** Sort order. */
   order?: "asc" | "desc";
+  /** Page number (1-indexed). Defaults to 1. */
+  page?: number;
+  /** Number of games per page. Defaults to 10. */
+  pageSize?: number;
 }
 
 export interface GameQueryResult {
   games: EnrichedGame[];
+  /** Total matching games (before pagination). */
   total: number;
+  /** Current page number (1-indexed). */
+  page: number;
+  /** Number of games per page. */
+  pageSize: number;
+  /** Total number of pages. */
+  totalPages: number;
 }
 
 /**
@@ -231,18 +238,6 @@ export async function queryGames(query: GameQuery): Promise<GameQueryResult> {
     games = games.filter((g) => g.genres.includes(query.genre!));
   }
 
-  // Apply platform filter (exact match within the game's platforms array)
-  if (query.platform) {
-    games = games.filter((g) => g.platforms.includes(query.platform!));
-  }
-
-  // Apply content type filter
-  if (query.contentType === "base") {
-    games = games.filter((g) => g.category === 0);
-  } else if (query.contentType === "dlc") {
-    games = games.filter((g) => g.category !== null && g.category >= 1 && g.category <= 4);
-  }
-
   // Apply developer filter (exact match within the game's developers array)
   if (query.developer) {
     games = games.filter((g) => g.developers.includes(query.developer!));
@@ -258,37 +253,56 @@ export async function queryGames(query: GameQuery): Promise<GameQueryResult> {
     games = games.filter((g) => g.endangerment.level === query.riskLevel);
   }
 
-  // Apply sorting
+  // Apply sorting — name is always a secondary tiebreaker.
   if (query.sort) {
     const order = query.order === "asc" ? 1 : -1;
 
     games = [...games].sort((a, b) => {
+      let cmp = 0;
+
       switch (query.sort) {
         case "title":
-          return order * a.name.localeCompare(b.name);
+          cmp = a.name.localeCompare(b.name);
+          return order * (cmp !== 0 ? cmp : a.name.localeCompare(b.name));
 
         case "release_date": {
           const dateA = a.first_release_date || 0;
           const dateB = b.first_release_date || 0;
-          return order * (dateA - dateB);
+          cmp = dateA - dateB;
+          break;
         }
 
         case "risk_score": {
-          // Higher score = more endangered.
-          // "asc" → least endangered first, "desc" → most endangered first.
-          return order * (b.endangerment.score - a.endangerment.score);
+          // "asc" = least endangered first, "desc" = most endangered first.
+          cmp = a.endangerment.score - b.endangerment.score;
+          break;
         }
 
         default:
           return 0;
       }
+
+      // Sort by primary field; break ties with name (ascending)
+      const primary = order * cmp;
+      if (primary !== 0) return primary;
+      return a.name.localeCompare(b.name);
     });
   } else {
-    // Default sort: highest risk first
-    games = [...games].sort(
-      (a, b) => b.endangerment.score - a.endangerment.score
-    );
+    // Default sort: highest risk first, then name ascending
+    games = [...games].sort((a, b) => {
+      const scoreCmp = b.endangerment.score - a.endangerment.score;
+      if (scoreCmp !== 0) return scoreCmp;
+      return a.name.localeCompare(b.name);
+    });
   }
 
-  return { games, total: games.length };
+  // Pagination — slice after filtering + sorting
+  const pageSize = query.pageSize && query.pageSize > 0 ? query.pageSize : 10;
+  const total = games.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const page = Math.max(1, Math.min(query.page ?? 1, totalPages));
+  const start = (page - 1) * pageSize;
+  const paged = games.slice(start, start + pageSize);
+
+  return { games: paged, total, page, pageSize, totalPages };
 }

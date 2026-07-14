@@ -79,13 +79,26 @@ ENGLISH_REGION_NAMES: set = {
     "new zealand",
     "worldwide",
 }
-JAPAN_REGION_NAME: str = "japan"
 
 # Global tally of release regions seen while processing games.
 # Example: {"worldwide": 120, "japan": 340}
 REGION_TALLY: Dict[str, int] = {}
 
 MAIN_GAME_CATEGORY: int = 0
+
+# Keywords in ``version_title`` that identify special / deluxe / collector
+# editions — these are excluded per the query spec.
+_EXCLUDED_EDITION_KEYWORDS: tuple = (
+    "special edition",
+    "deluxe edition",
+    "collector",
+    "limited edition",
+    "game of the year",
+    "ultimate edition",
+    "gold edition",
+    "complete edition",
+    "premium edition",
+)
 
 
 # ============================================================================
@@ -394,13 +407,19 @@ def _has_english_release(game: Dict[str, Any]) -> bool:
     return bool(region_names & ENGLISH_REGION_NAMES)
 
 
-def _has_japan_release(game: Dict[str, Any]) -> bool:
-    """Return ``True`` if the game has a release date in Japan."""
-    release_dates: List[Dict] = game.get("release_dates") or []
-    for rd in release_dates:
-        rr = rd.get("release_region") or {}
-        region = rr.get("region")
-        if region == JAPAN_REGION_NAME:
+def _is_excluded_edition(game: Dict[str, Any]) -> bool:
+    """Return ``True`` if the game is a special / deluxe / collector edition
+    variant that should be excluded per the query spec.
+
+    Only checks games that have a ``version_parent`` (i.e. they are a variant
+    of another game), then matches ``version_title`` against known edition
+    keywords.
+    """
+    if not game.get("version_parent"):
+        return False
+    version_title = (game.get("version_title") or "").lower()
+    for keyword in _EXCLUDED_EDITION_KEYWORDS:
+        if keyword in version_title:
             return True
     return False
 
@@ -483,16 +502,14 @@ def _clean_game(game: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def filter_games(
-    raw_games: List[Dict[str, Any]], japan_only: bool
-) -> List[Dict[str, Any]]:
+def filter_games(raw_games: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """
     Client-side filtering loop.
 
-    - **Default**: keep games released in the English market that were
-      **not** released in Japan (Western-exclusive).
-    - **``--japan-only``**: keep games released in Japan that were **not**
-      released in any English region (Japan-exclusive).
+    Keeps only games that:
+    * Are main games (``category == 0`` — excludes DLC, expansions, bundles).
+    * Have an English-market release.
+    * Are **not** a special / deluxe / collector edition variant.
     """
     filtered: List[Dict[str, Any]] = []
 
@@ -501,15 +518,13 @@ def filter_games(
         if category is not None and category != MAIN_GAME_CATEGORY:
             continue
 
-        has_english = _has_english_release(game)
-        has_japan = _has_japan_release(game)
+        if not _has_english_release(game):
+            continue
 
-        if japan_only:
-            if has_japan and not has_english:
-                filtered.append(_clean_game(game))
-        else:
-            if has_english and not has_japan:
-                filtered.append(_clean_game(game))
+        if _is_excluded_edition(game):
+            continue
+
+        filtered.append(_clean_game(game))
 
     return filtered
 
@@ -530,8 +545,6 @@ def _parse_args() -> argparse.Namespace:
             "  python .asd/artifacts/fetch_ps_vita_games.py --client-id YOUR_ID --client-secret YOUR_SECRET\n\n"
             "  # Use a pre-existing Bearer Token\n"
             "  python .asd/artifacts/fetch_ps_vita_games.py --client-id YOUR_ID --token YOUR_TOKEN\n\n"
-            "  # Japan-only games\n"
-            "  python .asd/artifacts/fetch_ps_vita_games.py --client-id YOUR_ID --client-secret YOUR_SECRET --japan-only\n\n"
             "  # Environment variables (no CLI flags needed)\n"
             "  set IGDB_CLIENT_ID=YOUR_ID\n"
             "  set IGDB_CLIENT_SECRET=YOUR_SECRET\n"
@@ -560,14 +573,6 @@ def _parse_args() -> argparse.Namespace:
             "IGDB Bearer (Access) Token – a pre-generated token from Twitch OAuth. "
             "Falls back to IGDB_TOKEN env var. "
             "If you provide --client-secret instead, this is optional."
-        ),
-    )
-    parser.add_argument(
-        "--japan-only",
-        action="store_true",
-        help=(
-            "Fetch only PS Vita games released exclusively in Japan "
-            "(no English-market release)."
         ),
     )
     parser.add_argument(
@@ -600,15 +605,9 @@ def main() -> None:
     # Resolve credentials (exits on failure)
     client_id, token = resolve_credentials(args)
 
-    mode_label = (
-        "Japan-only games (no English release)"
-        if args.japan_only
-        else "English-market games (excluding Japan)"
-    )
-
     print("=" * 56)
     print("  IGDB PS Vita Games Fetcher")
-    print(f"  Mode: {mode_label}")
+    print(f"  Mode: English-market games")
     print(f"  Output: {args.output}")
     print("=" * 56)
 
@@ -625,9 +624,8 @@ def main() -> None:
     # ------------------------------------------------------------------
     # 2. Filter client-side and clean the data
     # ------------------------------------------------------------------
-    print(f"\n[2/2] Applying region filters ...")
-    print(f" Japan-only: {args.japan_only}")
-    filtered = filter_games(raw_games, args.japan_only)
+    print(f"\n[2/2] Applying filters (English market, exclude editions) ...")
+    filtered = filter_games(raw_games)
     print(f"  Matching games: {len(filtered)}")
     print(f"  Region tally (all fetched release entries): {REGION_TALLY}")
 
@@ -644,8 +642,8 @@ def main() -> None:
             {
                 "metadata": {
                     "source": "IGDB API v4",
-                    "query": "PS Vita games (English market, Japan excluded; category filtered client-side)",
-                    "mode": mode_label,
+                    "query": "PS Vita games (English market; DLC & special/deluxe/collector editions excluded)",
+                    "mode": "English-market games",
                     "total": len(filtered),
                     "note": "release_formats is best-effort based on IGDB metadata heuristics",
                 },

@@ -1,14 +1,47 @@
 import { Suspense } from "react";
-import { loadGames } from "@/lib/data";
+import { queryGames, getUniqueGenres, getUniquePlatforms, getUniqueDevelopers, getUniquePublishers, getCategoryCounts } from "@/lib/data";
 import { GameTable } from "@/components/game-table";
 import { SearchInput } from "@/components/search-input";
+import { FilterBar } from "@/components/filter-bar";
+import { SortSelect } from "@/components/sort-select";
 
 interface PageProps {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    genre?: string;
+    platform?: string;
+    contentType?: string;
+    developer?: string;
+    publisher?: string;
+    sort?: string;
+    order?: string;
+  }>;
 }
 
 export default async function DashboardPage({ searchParams }: PageProps) {
-  const { q = "" } = await searchParams;
+  const params = await searchParams;
+  const {
+    q = "",
+    genre = "",
+    platform = "",
+    contentType = "",
+    developer = "",
+    publisher = "",
+    sort = "",
+    order = "",
+  } = params;
+
+  // Load filter options from data (these are lightweight)
+  const genres = await getUniqueGenres();
+  const platforms = await getUniquePlatforms();
+  const developers = await getUniqueDevelopers();
+  const publishers = await getUniquePublishers();
+  const categoryCounts = await getCategoryCounts();
+
+  const hasDlc = categoryCounts.dlc > 0;
+
+  // Count active filters for the summary
+  const activeFilters = [genre, platform, contentType, developer, publisher].filter(Boolean).length;
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
@@ -18,36 +51,81 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           PS Vita Exclusive Games
         </h1>
         <p className="mt-1.5 text-sm text-zinc-500">
-          Browse and explore {""}
+          Browse and explore{" "}
           <span className="font-semibold text-zinc-700">2,129</span> games
           available exclusively on PlayStation Vita.
         </p>
       </header>
 
-      {/* Search bar */}
-      <div className="mb-6">
+      {/* Search + Filter Bar */}
+      <div className="mb-6 space-y-4">
+        {/* Title search */}
         <SearchInput defaultValue={q} />
+
+        {/* Genre / Platform / Content Type / Developer / Publisher filters */}
+        <FilterBar
+          genres={genres}
+          platforms={platforms}
+          developers={developers}
+          publishers={publishers}
+          categoryCounts={categoryCounts}
+          hasDlc={hasDlc}
+        />
       </div>
 
       {/* Results */}
       <Suspense fallback={<TableSkeleton />}>
-        <GamesList query={q} />
+        <GamesList
+          search={q}
+          genre={genre}
+          platform={platform}
+          contentType={contentType}
+          developer={developer}
+          publisher={publisher}
+          sort={sort}
+          order={order}
+          activeFilters={activeFilters}
+        />
       </Suspense>
     </div>
   );
 }
 
-async function GamesList({ query }: { query: string }) {
-  let games;
+async function GamesList({
+  search,
+  genre,
+  platform,
+  contentType,
+  developer,
+  publisher,
+  sort,
+  order,
+  activeFilters,
+}: {
+  search: string;
+  genre: string;
+  platform: string;
+  contentType: string;
+  developer: string;
+  publisher: string;
+  sort: string;
+  order: string;
+  activeFilters: number;
+}) {
+  let result;
   let errorMessage: string | null = null;
 
   try {
-    const data = await loadGames();
-    const q = query.toLowerCase().trim();
-
-    games = q
-      ? data.games.filter((g) => g.name.toLowerCase().includes(q))
-      : data.games;
+    result = await queryGames({
+      search,
+      genre: genre || undefined,
+      platform: platform || undefined,
+      contentType: contentType || undefined,
+      developer: developer || undefined,
+      publisher: publisher || undefined,
+      sort: (sort as "title" | "release_date") || undefined,
+      order: (order as "asc" | "desc") || undefined,
+    });
   } catch (err) {
     errorMessage =
       err instanceof Error ? err.message : "Failed to load game data.";
@@ -57,15 +135,39 @@ async function GamesList({ query }: { query: string }) {
     return <ErrorState message={errorMessage} />;
   }
 
-  if (!games || games.length === 0) {
-    return <EmptyState query={query} />;
+  if (!result || result.games.length === 0) {
+    return <EmptyState query={search} activeFilters={activeFilters} />;
   }
 
-  return <GameTable games={games} />;
+  return (
+    <>
+      {/* Sort controls + count */}
+      <div className="mb-4 flex items-center justify-between">
+        <p className="text-xs text-zinc-400">
+          Showing {result.total} game{result.total !== 1 ? "s" : ""}
+          {activeFilters > 0 && (
+            <span className="ml-1">
+              (filtered from 2,129)
+            </span>
+          )}
+        </p>
+        <SortSelect />
+      </div>
+
+      <GameTable games={result.games} />
+    </>
+  );
 }
 
-function EmptyState({ query }: { query: string }) {
-  if (!query) return null;
+function EmptyState({
+  query,
+  activeFilters,
+}: {
+  query: string;
+  activeFilters: number;
+}) {
+  const hasFilters = Boolean(query) || activeFilters > 0;
+  if (!hasFilters) return null;
 
   return (
     <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
@@ -82,8 +184,14 @@ function EmptyState({ query }: { query: string }) {
           d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
         />
       </svg>
-      <p className="text-lg font-medium">No results for &ldquo;{query}&rdquo;</p>
-      <p className="text-sm">Try a different search term.</p>
+      <p className="text-lg font-medium">No games found</p>
+      <p className="text-sm">
+        {query && activeFilters > 0
+          ? `No results for \u201c${query}\u201d with the selected filters.`
+          : query
+            ? `No results for \u201c${query}\u201d.`
+            : "Try adjusting your filters."}
+      </p>
     </div>
   );
 }

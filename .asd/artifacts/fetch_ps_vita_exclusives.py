@@ -12,6 +12,7 @@ that meet the following criteria:
     - Released (physical and/or digital)
     - Released to the English market
     - Optional: Japan-market exclusives only
+    - Includes all platforms each game was released on (not just PS Vita)
 
 Authentication
 --------------
@@ -247,7 +248,9 @@ def _fields_query() -> str:
     """Return the comma-separated list of fields to request from IGDB."""
     return (
         "name,summary,first_release_date,slug,url,"
-        "genres.name,themes.name,game_modes.name,"
+        "genres.name,themes.name,game_modes.name,platforms.name,"
+        "involved_companies.company.name,involved_companies.developer,"
+        "involved_companies.publisher,"
         "total_rating,total_rating_count,rating,rating_count,"
         "cover.url,"
         "release_dates.category,release_dates.date,"
@@ -347,12 +350,28 @@ def _clean_game(game: Dict[str, Any]) -> Dict[str, Any]:
     if raw_cover:
         cover_url = f"https:{raw_cover.replace('t_thumb', 't_cover_big')}"
 
-    # Collect genre / theme / game-mode names
+    # Collect genre / theme / game-mode / platform names
     genres: List[str] = [g["name"] for g in (game.get("genres") or []) if g.get("name")]
     themes: List[str] = [t["name"] for t in (game.get("themes") or []) if t.get("name")]
     game_modes: List[str] = [
         m["name"] for m in (game.get("game_modes") or []) if m.get("name")
     ]
+    platforms: List[str] = [
+        p["name"] for p in (game.get("platforms") or []) if p.get("name")
+    ]
+
+    # Developers & publishers from involved_companies
+    developers: List[str] = []
+    publishers: List[str] = []
+    for ic in game.get("involved_companies") or []:
+        company = ic.get("company") or {}
+        company_name = company.get("name")
+        if not company_name:
+            continue
+        if ic.get("developer"):
+            developers.append(company_name)
+        if ic.get("publisher"):
+            publishers.append(company_name)
 
     # Release dates – boiled down to a simple list
     releases: List[Dict[str, str]] = []
@@ -380,6 +399,9 @@ def _clean_game(game: Dict[str, Any]) -> Dict[str, Any]:
         "genres": genres,
         "themes": themes,
         "game_modes": game_modes,
+        "platforms": platforms,
+        "developers": developers,
+        "publishers": publishers,
         "releases": releases,
     }
 

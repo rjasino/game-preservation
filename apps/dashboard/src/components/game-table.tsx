@@ -41,7 +41,12 @@ export function GameTable({ games }: GameTableProps) {
               <th className="px-4 py-3 font-semibold text-zinc-700">Cover</th>
               <th className="px-4 py-3 font-semibold text-zinc-700">Name</th>
               <th className="px-4 py-3 font-semibold text-zinc-700">Genre</th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Platform</th>
+              <th className="px-4 py-3 font-semibold text-zinc-700 hidden lg:table-cell">
+                Developer
+              </th>
+              <th className="px-4 py-3 font-semibold text-zinc-700 hidden lg:table-cell">
+                Platforms
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -81,20 +86,19 @@ export function GameTable({ games }: GameTableProps) {
                     ? game.genres.join(", ")
                     : "\u2014"}
                 </td>
-                <td className="px-4 py-3">
-                  <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
-                    PS Vita
-                  </span>
+                <td className="px-4 py-3 text-zinc-600 hidden lg:table-cell">
+                  {game.developers.length > 0
+                    ? game.developers[0]
+                    : "\u2014"}
+                </td>
+                <td className="px-4 py-3 hidden lg:table-cell">
+                  <PlatformBadges platforms={game.platforms} />
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-
-      <p className="mt-3 text-xs text-zinc-400">
-        Showing {games.length} game{games.length !== 1 ? "s" : ""}
-      </p>
 
       {selectedGame && (
         <GameDetailModal
@@ -106,6 +110,48 @@ export function GameTable({ games }: GameTableProps) {
   );
 }
 
+/**
+ * Display up to 2 platform badges with a "+N more" indicator for the rest.
+ */
+function PlatformBadges({ platforms }: { platforms: string[] }) {
+  const maxVisible = 2;
+  const visible = platforms.slice(0, maxVisible);
+  const remaining = platforms.length - maxVisible;
+
+  return (
+    <div className="flex flex-wrap items-center gap-1">
+      {visible.map((p) => (
+        <span
+          key={p}
+          className="inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10"
+        >
+          {p}
+        </span>
+      ))}
+      {remaining > 0 && (
+        <span className="text-xs text-zinc-400">+{remaining} more</span>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Map IGDB category id to a human-readable label.
+ * IGDB categories: 0=main_game, 1=dlc_addon, 2=expansion,
+ *                   3=bundle, 4=standalone_expansion, …
+ */
+function getCategoryLabel(category: number | null): string {
+  if (category === null) return "Unknown";
+  switch (category) {
+    case 0: return "Base Game";
+    case 1: return "DLC / Add-on";
+    case 2: return "Expansion";
+    case 3: return "Bundle";
+    case 4: return "Standalone Expansion";
+    default: return `Category ${category}`;
+  }
+}
+
 function GameDetailModal({
   game,
   onClose,
@@ -113,6 +159,7 @@ function GameDetailModal({
   game: Game;
   onClose: () => void;
 }) {
+  const contentTypeLabel = getCategoryLabel(game.category);
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
@@ -143,9 +190,14 @@ function GameDetailModal({
               <h2 className="text-xl font-bold text-zinc-900 break-words">
                 {game.name}
               </h2>
-              <span className="mt-0.5 inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
-                PS Vita
-              </span>
+              <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                <PlatformBadges platforms={game.platforms} />
+                {game.category !== null && game.category !== 0 && (
+                  <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-700/10">
+                    {contentTypeLabel}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
           <button
@@ -207,7 +259,60 @@ function GameDetailModal({
                   : "Unknown"}
               </p>
             </section>
+
+            {/* Content Type */}
+            {game.category !== null && game.category !== 0 && (
+              <section>
+                <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                  Content Type
+                </h3>
+                <p className="text-sm text-zinc-700">{contentTypeLabel}</p>
+              </section>
+            )}
+
+            {/* Developer */}
+            <section>
+              <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                Developer{game.developers.length !== 1 ? "s" : ""}
+              </h3>
+              <p className="text-sm text-zinc-700">
+                {game.developers.length > 0
+                  ? game.developers.join(", ")
+                  : "\u2014"}
+              </p>
+            </section>
+
+            {/* Publisher */}
+            <section>
+              <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                Publisher{game.publishers.length !== 1 ? "s" : ""}
+              </h3>
+              <p className="text-sm text-zinc-700">
+                {game.publishers.length > 0
+                  ? game.publishers.join(", ")
+                  : "\u2014"}
+              </p>
+            </section>
           </div>
+
+          {/* Platforms */}
+          <section>
+            <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              Platform{game.platforms.length !== 1 ? "s" : ""}
+            </h3>
+            <div className="flex flex-wrap gap-1.5">
+              {game.platforms.length > 0
+                ? game.platforms.map((p) => (
+                    <span
+                      key={p}
+                      className="inline-flex rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10"
+                    >
+                      {p}
+                    </span>
+                  ))
+                : <span className="text-sm text-zinc-400">\u2014</span>}
+            </div>
+          </section>
 
           {/* Genres */}
           <section>

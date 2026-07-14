@@ -35,6 +35,7 @@ interface PageProps {
     order?: string;
     page?: string;
     size?: string;
+    salvaged?: string;
   }>;
 }
 
@@ -50,10 +51,14 @@ export default async function DashboardPage({ searchParams }: PageProps) {
     order = "",
     page: pageRaw,
     size: sizeRaw,
+    salvaged = "",
   } = params;
 
   const page = parsePage(pageRaw);
   const pageSize = parseSize(sizeRaw);
+  const salvagedMode: "all" | "exclude" | "only" =
+    salvaged === "exclude" ? "exclude" : salvaged === "only" ? "only" : "all";
+
 
   // Load filter options and risk counts
   const genres = await getUniqueGenres();
@@ -94,10 +99,47 @@ export default async function DashboardPage({ searchParams }: PageProps) {
 
       {/* Risk Level Summary Bar */}
       <section className="mb-6 rounded-lg border border-zinc-200 bg-white p-4">
-        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">
-          Preservation Risk Overview
-        </h2>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+            Preservation Risk Overview
+          </h2>
+          {/* Three-way salvaged filter toggle */}
+          <div className="flex rounded-lg border border-zinc-200 bg-zinc-50 p-0.5 text-xs">
+            <a
+              href={`?${buildParamString(params, "salvaged", "")}`}
+              className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
+                salvagedMode === "all"
+                  ? "bg-white text-zinc-900 shadow-sm ring-1 ring-zinc-200"
+                  : "text-zinc-500 hover:text-zinc-700"
+              }`}
+            >
+              All
+            </a>
+            <a
+              href={`?${buildParamString(params, "salvaged", "exclude")}`}
+              className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
+                salvagedMode === "exclude"
+                  ? "bg-orange-100 text-orange-700 shadow-sm ring-1 ring-orange-200"
+                  : "text-zinc-500 hover:text-zinc-700"
+              }`}
+              title="Hide games that have widely-available modern versions"
+            >
+              At-Risk Only
+            </a>
+            <a
+              href={`?${buildParamString(params, "salvaged", "only")}`}
+              className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
+                salvagedMode === "only"
+                  ? "bg-green-100 text-green-700 shadow-sm ring-1 ring-green-200"
+                  : "text-zinc-500 hover:text-zinc-700"
+              }`}
+              title="Show only games salvaged by modern ports/remasters/remakes"
+            >
+              Salvaged Only
+            </a>
+          </div>
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2">
           {RISK_LEVEL_ORDER.map((level) => {
             const count = riskCounts[level];
             const colors = getRiskLevelColors(level);
@@ -150,6 +192,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           order={order}
           page={page}
           pageSize={pageSize}
+          salvagedMode={salvagedMode}
           activeFilters={activeFilters}
           totalGames={totalGames}
         />
@@ -166,7 +209,7 @@ function buildParamString(
 ): string {
   const next = new URLSearchParams();
   for (const [k, v] of Object.entries(current)) {
-    if (v && k !== "riskLevel") {
+    if (v && k !== key) {
       next.set(k, v);
     }
   }
@@ -190,6 +233,7 @@ async function GamesList({
   order,
   page,
   pageSize,
+  salvagedMode,
   activeFilters,
   totalGames,
 }: {
@@ -202,6 +246,7 @@ async function GamesList({
   order: string;
   page: number;
   pageSize: number;
+  salvagedMode: "all" | "exclude" | "only";
   activeFilters: number;
   totalGames: number;
 }) {
@@ -219,6 +264,7 @@ async function GamesList({
       order: (order as "asc" | "desc") || undefined,
       page,
       pageSize,
+      salvaged: salvagedMode,
     });
   } catch (err) {
     errorMessage =

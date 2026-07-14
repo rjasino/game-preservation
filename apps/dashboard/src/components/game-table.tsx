@@ -86,7 +86,12 @@ export function GameTable({ games }: GameTableProps) {
                   {game.name}
                 </td>
                 <td className="px-4 py-3">
-                  <RiskBadge level={game.endangerment.level} score={game.endangerment.score} />
+                  <RiskBadge
+                    level={game.endangerment.level}
+                    score={game.endangerment.score}
+                    salvaged={game.endangerment.salvagedByModernVersion}
+                    salvageReason={game.endangerment.salvageReason}
+                  />
                 </td>
                 <td className="px-4 py-3 text-zinc-600 hidden lg:table-cell">
                   {game.genres.length > 0
@@ -119,23 +124,41 @@ export function GameTable({ games }: GameTableProps) {
 
 /**
  * Renders a coloured badge for the risk level and score.
+ * When a game is salvaged by a modern version, adds a green indicator.
  */
 function RiskBadge({
   level,
   score,
+  salvaged,
+  salvageReason,
 }: {
   level: string;
   score: number;
+  salvaged?: boolean;
+  salvageReason?: string | null;
 }) {
   const colors = getRiskLevelColors(level as Parameters<typeof getRiskLevelColors>[0]);
 
   return (
-    <span
-      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${colors.bg} ${colors.text} ${colors.ring}`}
-      title={`Score: ${score} \u2014 ${level}`}
-    >
-      {level}
-      <span className="opacity-60 tabular-nums">{score}</span>
+    <span className="inline-flex items-center gap-1">
+      <span
+        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${colors.bg} ${colors.text} ${colors.ring}`}
+        title={`Score: ${score} \u2014 ${level}`}
+      >
+        {level}
+        <span className="opacity-60 tabular-nums">{score}</span>
+      </span>
+      {salvaged && (
+        <span
+          className="inline-flex items-center gap-0.5 rounded-full bg-green-100 px-1.5 py-0.5 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-700/10"
+          title={salvageReason ?? "Modern version available"}
+        >
+          <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+          Salvaged
+        </span>
+      )}
     </span>
   );
 }
@@ -273,11 +296,48 @@ function GameDetailModal({
               Preservation Risk
             </h3>
             <div className="flex flex-wrap items-center gap-3">
-              <RiskBadge level={endangerment.level} score={endangerment.score} />
+              <RiskBadge
+                level={endangerment.level}
+                score={endangerment.score}
+                salvaged={endangerment.salvagedByModernVersion}
+                salvageReason={endangerment.salvageReason}
+              />
               <span className="text-xs text-zinc-400">
                 Score: <span className="font-semibold text-zinc-700">{endangerment.score}</span>
               </span>
             </div>
+
+            {/* Salvage notice */}
+            {endangerment.salvagedByModernVersion && (
+              <div className="mt-3 rounded-md bg-green-50 p-3 ring-1 ring-inset ring-green-200">
+                <div className="flex items-start gap-2">
+                  <svg
+                    className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <div>
+                    <p className="text-sm font-medium text-green-800">
+                      Salvaged by Modern Version
+                    </p>
+                    <p className="mt-0.5 text-xs text-green-700">
+                      {endangerment.salvageReason}
+                    </p>
+                    <p className="mt-0.5 text-xs text-green-600">
+                      This game can be excluded from at-risk reports.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Reasons */}
             {endangerment.reasons.length > 0 && (
@@ -309,6 +369,81 @@ function GameDetailModal({
               </div>
             )}
           </section>
+
+          {/* Modern Versions */}
+          {game.modern_versions && game.modern_versions.length > 0 && (
+            <section className="rounded-lg border border-green-200 bg-green-50/50 p-4">
+              <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-green-700">
+                Modern Versions
+              </h3>
+              <div className="space-y-3">
+                {game.modern_versions.map((mv) => (
+                  <div
+                    key={mv.id}
+                    className="rounded-lg border border-green-200 bg-white p-3"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <span className="text-sm font-medium text-zinc-900">
+                          {mv.name}
+                        </span>
+                        <span className="ml-2 inline-flex rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                          {mv.relation}
+                        </span>
+                      </div>
+                      {mv.salvages_original && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700">
+                          <svg
+                            className="h-3 w-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                          Salvages Original
+                        </span>
+                      )}
+                    </div>
+                    <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                      <span className="text-xs text-zinc-500">Platforms:</span>
+                      {mv.platforms.map((p) => (
+                        <span
+                          key={p}
+                          className="inline-flex rounded-md bg-blue-50 px-1.5 py-0.5 text-xs text-blue-700"
+                        >
+                          {p}
+                        </span>
+                      ))}
+                    </div>
+                    <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                      <span className="text-xs text-zinc-500">Risk:</span>
+                      <RiskBadge level={mv.risk_level} score={0} />
+                      {mv.ecosystem_families.length > 0 && (
+                        <>
+                          <span className="text-xs text-zinc-400">|</span>
+                          <span className="text-xs text-zinc-500">Ecosystems:</span>
+                          {mv.ecosystem_families.map((f) => (
+                            <span
+                              key={f}
+                              className="inline-flex rounded-md bg-zinc-100 px-1.5 py-0.5 text-xs text-zinc-600"
+                            >
+                              {f}
+                            </span>
+                          ))}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* Summary */}
           {game.summary && (

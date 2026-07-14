@@ -3,6 +3,7 @@ import type {
   EndangermentAssessment,
   EndangermentLevel,
   Game,
+  GameEnrichment,
 } from "./types";
 
 // ---------------------------------------------------------------------------
@@ -118,10 +119,35 @@ interface ScoredResult {
 }
 
 /**
+ * Apply enrichment data to a base assessment. If a widely-available modern
+ * version exists, flags the result as salvaged and adds the salvage reason.
+ */
+function _applyEnrichment(
+  assessment: EndangermentAssessment,
+  enrichment: GameEnrichment | undefined
+): EndangermentAssessment {
+  if (!enrichment || !enrichment.exclude_from_at_risk) {
+    return assessment;
+  }
+
+  return {
+    ...assessment,
+    salvagedByModernVersion: true,
+    salvageReason: enrichment.exclusion_reason ?? "Modern version available",
+  };
+}
+
+/**
  * Assess the preservation endangerment of a game based on its platform
  * ecosystem lock-in.  This is a deterministic, rule-based model — no AI.
+ *
+ * When ``enrichment`` is provided and indicates a widely-available modern
+ * version exists, the assessment will include salvaging information.
  */
-export function assessEndangerment(game: Game): EndangermentAssessment {
+export function assessEndangerment(
+  game: Game,
+  enrichment?: GameEnrichment
+): EndangermentAssessment {
   const { platforms } = game;
 
   // Edge case: no platforms → treat as Medium (unknown risk)
@@ -131,6 +157,8 @@ export function assessEndangerment(game: Game): EndangermentAssessment {
       level: "Medium",
       reasons: ["No platform data available"],
       ecosystemFamilies: [],
+      salvagedByModernVersion: false,
+      salvageReason: null,
     };
   }
 
@@ -151,36 +179,51 @@ export function assessEndangerment(game: Game): EndangermentAssessment {
     );
 
     if (vitaOnly) {
-      return {
-        score: 100,
-        level: "Critical",
-        reasons: ["Only released on PlayStation Vita"],
-        ecosystemFamilies: families,
-      };
+      return _applyEnrichment(
+        {
+          score: 100,
+          level: "Critical",
+          reasons: ["Only released on PlayStation Vita"],
+          ecosystemFamilies: families,
+          salvagedByModernVersion: false,
+          salvageReason: null,
+        },
+        enrichment
+      );
     }
   }
 
   // ---- High: locked to Sony ecosystem only ------------------------------
   if (isSonyOnly) {
-    return {
-      score: 80,
-      level: "High",
-      reasons: ["Locked to Sony platforms"],
-      ecosystemFamilies: families,
-    };
+    return _applyEnrichment(
+      {
+        score: 80,
+        level: "High",
+        reasons: ["Locked to Sony platforms"],
+        ecosystemFamilies: families,
+        salvagedByModernVersion: false,
+        salvageReason: null,
+      },
+      enrichment
+    );
   }
 
   // ---- Medium: closed ecosystems, no PC / Web / Mobile ------------------
   if (!hasOpenEcosystem) {
-    return {
-      score: 60,
-      level: "Medium",
-      reasons: [
-        "No PC, web, or mobile release found",
-        `Locked to ${families.join("/")} platforms`,
-      ],
-      ecosystemFamilies: families,
-    };
+    return _applyEnrichment(
+      {
+        score: 60,
+        level: "Medium",
+        reasons: [
+          "No PC, web, or mobile release found",
+          `Locked to ${families.join("/")} platforms`,
+        ],
+        ecosystemFamilies: families,
+        salvagedByModernVersion: false,
+        salvageReason: null,
+      },
+      enrichment
+    );
   }
 
   // ---- Minimal: broadly distributed across several ecosystem families ---
@@ -196,6 +239,8 @@ export function assessEndangerment(game: Game): EndangermentAssessment {
         "Preservation risk is low due to wide availability",
       ],
       ecosystemFamilies: families,
+      salvagedByModernVersion: false,
+      salvageReason: null,
     };
   }
 
@@ -212,6 +257,8 @@ export function assessEndangerment(game: Game): EndangermentAssessment {
       `Available on ${openFamilies.join(", ")}, so preservation risk is lower`,
     ],
     ecosystemFamilies: families,
+    salvagedByModernVersion: false,
+    salvageReason: null,
   };
 }
 

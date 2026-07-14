@@ -1,0 +1,3025 @@
+{
+  "metadata": {
+    "source": "IGDB API v4",
+    "description": "Modern version enrichment for at-risk PS Vita games. Maps game IDs to discovered remakes/remasters/ports.",
+    "total_games_enriched": 440,
+    "games_salvaged": 24
+  },
+  "enrichment": {
+    "377542": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "325797": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "365702": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "202713": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "347268": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "214520": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "159375": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "301446": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "215362": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "378099": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "214514": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "138459": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "331164": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "140424": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "210447": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "347164": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "140423": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "148265": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "120799": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "254462": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "118533": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "89569": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "362110": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "118701": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "106988": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "110017": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "187858": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "111345": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "105109": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "54218": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "54217": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "114417": {
+      "modern_versions": [
+        {
+          "id": 114418,
+          "name": "Reverie: Sweet As Edition",
+          "relation": "port",
+          "platforms": [
+            "Xbox Series X|S",
+            "PC (Microsoft Windows)",
+            "PlayStation 5",
+            "Xbox One",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC",
+            "Sony",
+            "Xbox"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Reverie: Sweet As Edition"
+    },
+    "74874": {
+      "modern_versions": [
+        {
+          "id": 117015,
+          "name": "Metal Max Xeno Reborn",
+          "relation": "remake",
+          "platforms": [
+            "PlayStation 4",
+            "PC (Microsoft Windows)",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC",
+            "Sony"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Metal Max Xeno Reborn"
+    },
+    "99676": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "87677": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "212576": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "99485": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "167039": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52018": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "25312": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "56000": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42894": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "27303": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "28444": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "117577": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "28243": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "379957": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52245": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "26663": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "19465": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "26237": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "99533": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "99532": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42678": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "12632": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "297245": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "25586": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "24195": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42676": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "25639": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "24954": {
+      "modern_versions": [
+        {
+          "id": 75990,
+          "name": "The Caligula Effect: Overdose",
+          "relation": "remake",
+          "platforms": [
+            "PlayStation 4",
+            "PC (Microsoft Windows)",
+            "PlayStation 5",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC",
+            "Sony"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: The Caligula Effect: Overdose"
+    },
+    "58915": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "89908": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42686": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42681": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "59160": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "99753": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42677": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "194820": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "58721": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "12078": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "61043": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "13111": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "25699": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "95365": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "22044": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "250380": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "15709": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20401": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "23687": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "11540": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20152": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "139435": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "21586": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "19163": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "12884": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "23476": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "41873": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "11455": {
+      "modern_versions": [
+        {
+          "id": 26915,
+          "name": "Tokyo Xanadu eX+",
+          "relation": "expanded",
+          "platforms": [
+            "PlayStation 4",
+            "PC (Microsoft Windows)",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC",
+            "Sony"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Tokyo Xanadu eX+"
+    },
+    "319167": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "59735": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "12280": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "59961": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "234238": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "77985": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "11056": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "26996": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "19958": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "89914": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "80619": {
+      "modern_versions": [
+        {
+          "id": 371812,
+          "name": "Shiren the Wanderer: The Tower of Fortune and the Dice of Fate",
+          "relation": "expanded",
+          "platforms": [
+            "PC (Microsoft Windows)",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Low",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Shiren the Wanderer: The Tower of Fortune and the Dice of Fate"
+    },
+    "22775": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "60250": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "353722": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52539": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "99559": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52824": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "27109": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "60535": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "8655": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "60625": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "44650": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "21587": {
+      "modern_versions": [
+        {
+          "id": 68534,
+          "name": "Spelunker Party",
+          "relation": "port",
+          "platforms": [
+            "PC (Microsoft Windows)",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Low",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Spelunker Party"
+    },
+    "221032": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52797": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "89918": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "60650": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42696": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42720": {
+      "modern_versions": [
+        {
+          "id": 122749,
+          "name": "Atelier Escha & Logy: Alchemists of the Dusk Sky DX",
+          "relation": "port",
+          "platforms": [
+            "PlayStation 4",
+            "PC (Microsoft Windows)",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC",
+            "Sony"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Atelier Escha & Logy: Alchemists of the Dusk Sky DX"
+    },
+    "372821": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "99557": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "82043": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "22186": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "11001": {
+      "modern_versions": [
+        {
+          "id": 222484,
+          "name": "Earth Defense Force 2 for Nintendo Switch",
+          "relation": "port",
+          "platforms": [
+            "Nintendo Switch"
+          ],
+          "risk_level": "Medium",
+          "ecosystem_families": [
+            "Nintendo"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "60766": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "60781": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42693": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "99802": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "90501": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20024": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52939": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52911": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "21707": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42687": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "99547": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "99810": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "91029": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "250377": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "240424": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "23228": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "250375": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "223125": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52223": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "19919": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "147222": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "61539": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "19822": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "223124": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "6060": {
+      "modern_versions": [
+        {
+          "id": 317086,
+          "name": "Freedom Wars Remastered",
+          "relation": "remaster",
+          "platforms": [
+            "PlayStation 4",
+            "PC (Microsoft Windows)",
+            "PlayStation 5",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC",
+            "Sony"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Freedom Wars Remastered"
+    },
+    "61402": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "95366": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "7380": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "63011": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "23494": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42698": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "9618": {
+      "modern_versions": [
+        {
+          "id": 11839,
+          "name": "Sword Art Online Re: Hollow Fragment",
+          "relation": "expanded",
+          "platforms": [
+            "PlayStation 4",
+            "PC (Microsoft Windows)"
+          ],
+          "risk_level": "Low",
+          "ecosystem_families": [
+            "PC",
+            "Sony"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Sword Art Online Re: Hollow Fragment"
+    },
+    "344442": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20943": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "12195": {
+      "modern_versions": [
+        {
+          "id": 12209,
+          "name": "Tokyo Twilight Ghost Hunters: Daybreak Special Gigs",
+          "relation": "expanded",
+          "platforms": [
+            "PlayStation 3",
+            "PlayStation 4",
+            "PC (Microsoft Windows)",
+            "PlayStation Vita"
+          ],
+          "risk_level": "Low",
+          "ecosystem_families": [
+            "PC",
+            "Sony"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Tokyo Twilight Ghost Hunters: Daybreak Special Gigs"
+    },
+    "9642": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "23417": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "44473": {
+      "modern_versions": [
+        {
+          "id": 122748,
+          "name": "Atelier Ayesha: The Alchemist of Dusk DX",
+          "relation": "port",
+          "platforms": [
+            "PlayStation 4",
+            "PC (Microsoft Windows)",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC",
+            "Sony"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Atelier Ayesha: The Alchemist of Dusk DX"
+    },
+    "313040": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "79483": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42682": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "7290": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20873": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "9626": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "7273": {
+      "modern_versions": [
+        {
+          "id": 139979,
+          "name": "Ar Nosurge: Ode to an Unborn Star DX",
+          "relation": "remaster",
+          "platforms": [
+            "PlayStation 4",
+            "PC (Microsoft Windows)",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC",
+            "Sony"
+          ],
+          "salvages_original": true
+        },
+        {
+          "id": 91029,
+          "name": "Ar nosurge Plus",
+          "relation": "expanded",
+          "platforms": [
+            "PlayStation Vita"
+          ],
+          "risk_level": "Critical",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Ar Nosurge: Ode to an Unborn Star DX"
+    },
+    "6061": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20063": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "5651": {
+      "modern_versions": [
+        {
+          "id": 44650,
+          "name": "Deception IV: The Nightmare Princess",
+          "relation": "expanded",
+          "platforms": [
+            "PlayStation 3",
+            "PlayStation 4",
+            "PlayStation Vita"
+          ],
+          "risk_level": "High",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "10061": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20062": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "223123": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52532": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "140684": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "63364": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "147303": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52246": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "62906": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "8684": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "43039": {
+      "modern_versions": [
+        {
+          "id": 105031,
+          "name": "Atelier Rorona: The Alchemist of Arland DX",
+          "relation": "port",
+          "platforms": [
+            "PlayStation 4",
+            "PC (Microsoft Windows)",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC",
+            "Sony"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Atelier Rorona: The Alchemist of Arland DX"
+    },
+    "6363": {
+      "modern_versions": [
+        {
+          "id": 7606,
+          "name": "Tearaway: Unfolded",
+          "relation": "remake",
+          "platforms": [
+            "PlayStation 4"
+          ],
+          "risk_level": "High",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "254522": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "6007": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "223120": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42914": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "53032": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "63059": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42683": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "8649": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "240421": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "88277": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "1869": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "315076": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "63481": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "84154": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "62945": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "63072": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20856": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20016": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20067": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "63193": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52665": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "8658": {
+      "modern_versions": [
+        {
+          "id": 8657,
+          "name": "Toukiden: Kiwami",
+          "relation": "expanded",
+          "platforms": [
+            "PlayStation 4",
+            "PC (Microsoft Windows)",
+            "PlayStation Vita",
+            "PlayStation Portable"
+          ],
+          "risk_level": "Low",
+          "ecosystem_families": [
+            "PC",
+            "Sony"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Toukiden: Kiwami"
+    },
+    "9867": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "62526": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52156": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52912": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "18979": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20072": {
+      "modern_versions": [
+        {
+          "id": 53026,
+          "name": "Valhalla Knights 3 Gold",
+          "relation": "expanded",
+          "platforms": [
+            "PlayStation Vita"
+          ],
+          "risk_level": "Critical",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "228932": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "64384": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52590": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "36289": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "63631": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "147278": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20857": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20008": {
+      "modern_versions": [
+        {
+          "id": 405445,
+          "name": "Muramasa: Revenant Blades",
+          "relation": "remaster",
+          "platforms": [
+            "Nintendo Switch 2",
+            "PC (Microsoft Windows)",
+            "PlayStation 5",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC",
+            "Sony"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Muramasa: Revenant Blades"
+    },
+    "313041": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "63903": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42706": {
+      "modern_versions": [
+        {
+          "id": 105032,
+          "name": "Atelier Meruru: The Apprentice of Arland DX",
+          "relation": "port",
+          "platforms": [
+            "PlayStation 4",
+            "PC (Microsoft Windows)",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC",
+            "Sony"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Atelier Meruru: The Apprentice of Arland DX"
+    },
+    "313018": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "11725": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "19912": {
+      "modern_versions": [
+        {
+          "id": 6061,
+          "name": "Soul Sacrifice Delta",
+          "relation": "expanded",
+          "platforms": [
+            "PlayStation Vita"
+          ],
+          "risk_level": "Critical",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "7375": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "63854": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "315079": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "21000": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "313038": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "313037": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "21019": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "312972": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "1801": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "63924": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "9914": {
+      "modern_versions": [
+        {
+          "id": 148525,
+          "name": "Demon Gaze Extra",
+          "relation": "expanded",
+          "platforms": [
+            "PlayStation 4",
+            "PC (Microsoft Windows)",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC",
+            "Sony"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Demon Gaze Extra"
+    },
+    "52221": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "88895": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "119585": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "64291": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52220": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "315078": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "315077": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52148": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "381860": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "381859": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "19583": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42705": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42704": {
+      "modern_versions": [
+        {
+          "id": 105030,
+          "name": "Atelier Totori: The Adventurer of Arland DX",
+          "relation": "port",
+          "platforms": [
+            "PlayStation 4",
+            "PC (Microsoft Windows)",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC",
+            "Sony"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Atelier Totori: The Adventurer of Arland DX"
+    },
+    "86096": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "1797": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "26584": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52161": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "7390": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "8548": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "9123": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42757": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "248206": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "92456": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "3195": {
+      "modern_versions": [
+        {
+          "id": 20864,
+          "name": "Assassin's Creed: Liberation HD",
+          "relation": "port",
+          "platforms": [
+            "Google Stadia",
+            "PlayStation 3",
+            "PC (Microsoft Windows)",
+            "Xbox 360"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "Other",
+            "PC",
+            "Sony",
+            "Xbox"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Assassin's Creed: Liberation HD"
+    },
+    "42679": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42709": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20838": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "9714": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52861": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "77282": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "74160": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52804": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52151": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "21583": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "240395": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "64348": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "23430": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "95002": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52170": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "11768": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "53003": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "243259": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "7729": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52219": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "387259": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "19994": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "253148": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "253141": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "253138": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "387258": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "2985": {
+      "modern_versions": [
+        {
+          "id": 234702,
+          "name": "Persona 4 Golden",
+          "relation": "port",
+          "platforms": [
+            "Xbox Series X|S",
+            "PlayStation 4",
+            "PC (Microsoft Windows)",
+            "Xbox One",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC",
+            "Sony",
+            "Xbox"
+          ],
+          "salvages_original": true
+        },
+        {
+          "id": 348210,
+          "name": "Persona 4 Revival",
+          "relation": "remake",
+          "platforms": [
+            "Xbox Series X|S",
+            "PC (Microsoft Windows)",
+            "PlayStation 5"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "PC",
+            "Sony",
+            "Xbox"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern versions available: Persona 4 Golden, Persona 4 Revival"
+    },
+    "387262": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "93544": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "19907": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "65122": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "65164": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "22866": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "44575": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "65249": {
+      "modern_versions": [
+        {
+          "id": 119585,
+          "name": "Paint Park Plus",
+          "relation": "expanded",
+          "platforms": [
+            "PlayStation Vita"
+          ],
+          "risk_level": "Critical",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20815": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "65272": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "21022": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "19911": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42708": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20808": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "21722": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "19251": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "7374": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42707": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "22882": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "21569": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20732": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "2556": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "288944": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "93498": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "4693": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "140060": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "18371": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "21852": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "11701": {
+      "modern_versions": [
+        {
+          "id": 12529,
+          "name": "Gravity Rush Remastered",
+          "relation": "remaster",
+          "platforms": [
+            "PlayStation 4"
+          ],
+          "risk_level": "High",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "64936": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "302985": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "302717": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "302690": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20113": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "21008": {
+      "modern_versions": [
+        {
+          "id": 20067,
+          "name": "Ragnarok Odyssey Ace",
+          "relation": "expanded",
+          "platforms": [
+            "PlayStation 3",
+            "PlayStation Vita"
+          ],
+          "risk_level": "High",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42694": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "1545": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "126272": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "126271": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "126270": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "118550": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "64252": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20736": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "19267": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "18370": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "10900": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "8646": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "8643": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "8546": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "7301": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "6462": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "998": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "327491": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20633": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "206490": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "18373": {
+      "modern_versions": [
+        {
+          "id": 331211,
+          "name": "Patapon 3",
+          "relation": "port",
+          "platforms": [
+            "PlayStation 4",
+            "PlayStation 5"
+          ],
+          "risk_level": "High",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "7373": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "7298": {
+      "modern_versions": [
+        {
+          "id": 119506,
+          "name": "Disgaea 4 Complete+",
+          "relation": "port",
+          "platforms": [
+            "PlayStation 4",
+            "PC (Microsoft Windows)",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC",
+            "Sony"
+          ],
+          "salvages_original": true
+        },
+        {
+          "id": 42697,
+          "name": "Disgaea 4: A Promise Revisited",
+          "relation": "port",
+          "platforms": [
+            "Android",
+            "iOS",
+            "PlayStation Vita"
+          ],
+          "risk_level": "Low",
+          "ecosystem_families": [
+            "Mobile",
+            "Sony"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern versions available: Disgaea 4 Complete+, Disgaea 4: A Promise Revisited"
+    },
+    "26938": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "91918": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "73079": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "2134": {
+      "modern_versions": [
+        {
+          "id": 20063,
+          "name": "Dead Nation: Apocalypse Edition",
+          "relation": "port",
+          "platforms": [
+            "PlayStation 3",
+            "PlayStation 4",
+            "PlayStation Vita"
+          ],
+          "risk_level": "High",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "44491": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "222127": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "222126": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "222125": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "7458": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "26582": {
+      "modern_versions": [
+        {
+          "id": 26499,
+          "name": "Malicious Fallen",
+          "relation": "expanded",
+          "platforms": [
+            "PlayStation 4"
+          ],
+          "risk_level": "High",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        },
+        {
+          "id": 26584,
+          "name": "Malicious Rebirth",
+          "relation": "port",
+          "platforms": [
+            "PlayStation Vita"
+          ],
+          "risk_level": "Critical",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42763": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "210172": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52045": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "94126": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "26937": {
+      "modern_versions": [
+        {
+          "id": 140847,
+          "name": "Söldner-X 2: Final Prototype - Definitive Edition",
+          "relation": "remaster",
+          "platforms": [
+            "PlayStation 4",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Medium",
+          "ecosystem_families": [
+            "Nintendo",
+            "Sony"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52231": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52033": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "93563": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "14674": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "41028": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "117883": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "117882": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20068": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "2994": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52160": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "21742": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "11416": {
+      "modern_versions": [
+        {
+          "id": 234701,
+          "name": "Persona 3 Portable",
+          "relation": "port",
+          "platforms": [
+            "Xbox Series X|S",
+            "PlayStation 4",
+            "PC (Microsoft Windows)",
+            "Xbox One",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC",
+            "Sony",
+            "Xbox"
+          ],
+          "salvages_original": true
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Persona 3 Portable"
+    },
+    "7284": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "202185": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "67556": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42783": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42887": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "80165": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52232": {
+      "modern_versions": [
+        {
+          "id": 25834,
+          "name": "Hustle Kings VR",
+          "relation": "port",
+          "platforms": [
+            "PlayStation 4",
+            "PlayStation VR"
+          ],
+          "risk_level": "High",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "7813": {
+      "modern_versions": [
+        {
+          "id": 352489,
+          "name": "Patapon 2 Replay",
+          "relation": "remaster",
+          "platforms": [
+            "PC (Microsoft Windows)",
+            "PlayStation 5",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC",
+            "Sony"
+          ],
+          "salvages_original": true
+        },
+        {
+          "id": 76961,
+          "name": "Patapon 2 Remastered",
+          "relation": "remaster",
+          "platforms": [
+            "PlayStation 4"
+          ],
+          "risk_level": "High",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Patapon 2 Replay"
+    },
+    "46016": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "21944": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "22018": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20071": {
+      "modern_versions": [
+        {
+          "id": 142322,
+          "name": "Valhalla Knights 2: Battle Stance",
+          "relation": "expanded",
+          "platforms": [
+            "PlayStation Portable"
+          ],
+          "risk_level": "High",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "80504": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42799": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42839": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "7812": {
+      "modern_versions": [
+        {
+          "id": 352488,
+          "name": "Patapon Replay",
+          "relation": "remaster",
+          "platforms": [
+            "PC (Microsoft Windows)",
+            "PlayStation 5",
+            "Nintendo Switch"
+          ],
+          "risk_level": "Minimal",
+          "ecosystem_families": [
+            "Nintendo",
+            "PC",
+            "Sony"
+          ],
+          "salvages_original": true
+        },
+        {
+          "id": 26233,
+          "name": "Patapon Remastered",
+          "relation": "remaster",
+          "platforms": [
+            "PlayStation 4"
+          ],
+          "risk_level": "High",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": true,
+      "exclusion_reason": "Modern version available: Patapon Replay"
+    },
+    "1543": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "79415": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "21047": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "1683": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "21882": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42766": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "23125": {
+      "modern_versions": [
+        {
+          "id": 20628,
+          "name": "Mercury Meltdown Remix",
+          "relation": "port",
+          "platforms": [
+            "PlayStation 2"
+          ],
+          "risk_level": "High",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        },
+        {
+          "id": 5003,
+          "name": "Mercury Meltdown Revolution",
+          "relation": "port",
+          "platforms": [
+            "Wii"
+          ],
+          "risk_level": "Medium",
+          "ecosystem_families": [
+            "Nintendo"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "23136": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "20073": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42873": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "18192": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "19692": {
+      "modern_versions": [
+        {
+          "id": 20663,
+          "name": "Tokobot Plus: Mysteries of the Karakuri",
+          "relation": "expanded",
+          "platforms": [
+            "PlayStation 2"
+          ],
+          "risk_level": "High",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "207256": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42878": {
+      "modern_versions": [
+        {
+          "id": 259656,
+          "name": "Kingdom of Paradise",
+          "relation": "port",
+          "platforms": [
+            "PlayStation 4",
+            "PlayStation 5"
+          ],
+          "risk_level": "High",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "9676": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "9343": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "1753": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "4115": {
+      "modern_versions": [
+        {
+          "id": 206307,
+          "name": "Syphon Filter",
+          "relation": "port",
+          "platforms": [
+            "PlayStation 4",
+            "PlayStation 5"
+          ],
+          "risk_level": "High",
+          "ecosystem_families": [
+            "Sony"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "61564": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "44937": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "1721": {
+      "modern_versions": [
+        {
+          "id": 45182,
+          "name": "Mega Man 8: Anniversary Collector's Edition",
+          "relation": "port",
+          "platforms": [
+            "Sega Saturn"
+          ],
+          "risk_level": "Medium",
+          "ecosystem_families": [
+            "Other"
+          ],
+          "salvages_original": false
+        }
+      ],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "9500": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "73389": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "45013": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "228933": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "228931": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "186918": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "99814": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "99795": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "99542": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "96359": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "96349": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "95001": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "93601": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "91126": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "80197": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "78085": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "76874": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "76872": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "64445": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "64004": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "63419": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "63418": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "59409": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "59408": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "54650": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52920": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52171": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "52158": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "42667": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "23616": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    },
+    "10666": {
+      "modern_versions": [],
+      "exclude_from_at_risk": false,
+      "exclusion_reason": null
+    }
+  }
+}

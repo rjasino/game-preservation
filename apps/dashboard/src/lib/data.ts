@@ -1,9 +1,17 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import type { Game, GamesData, EndangermentLevel, EnrichedGame } from "./types";
+import type {
+  Game,
+  GamesData,
+  EndangermentLevel,
+  EnrichedGame,
+  EnrichmentData,
+  GameEnrichment,
+} from "./types";
 import { assessEndangerment, RISK_LEVEL_ORDER } from "./preservation";
 
 let cachedData: GamesData | null = null;
+let cachedEnrichment: Record<number, GameEnrichment> | null = null;
 
 /**
  * Load the games data from the bundled JSON file.
@@ -44,6 +52,35 @@ export async function loadGames(): Promise<GamesData> {
   }
 
   return cachedData;
+}
+
+/**
+ * Load modern-version enrichment data (produced by enrich_modern_versions.py).
+ * Results are cached. Returns null if the enrichment file is not found or
+ * cannot be parsed (graceful degradation).
+ */
+export async function loadEnrichment(): Promise<Record<number, GameEnrichment> | null> {
+  if (cachedEnrichment !== null) {
+    return cachedEnrichment || null;
+  }
+
+  try {
+    const filePath = path.join(
+      process.cwd(),
+      "src",
+      "data",
+      "modern_versions_enrichment.json"
+    );
+    const raw = await readFile(filePath, "utf-8");
+    const data = JSON.parse(raw) as EnrichmentData;
+
+    cachedEnrichment = data.enrichment ?? {};
+    return cachedEnrichment;
+  } catch {
+    // File not found or parse error — return null for graceful degradation
+    cachedEnrichment = undefined as unknown as Record<number, GameEnrichment>;
+    return null;
+  }
 }
 
 /**
@@ -151,6 +188,7 @@ export interface RiskLevelCounts {
  */
 export async function getRiskLevelCounts(): Promise<RiskLevelCounts> {
   const data = await loadGames();
+  const enrichment = await loadEnrichment();
   const counts: RiskLevelCounts = {
     Critical: 0,
     High: 0,
@@ -160,7 +198,8 @@ export async function getRiskLevelCounts(): Promise<RiskLevelCounts> {
   };
 
   for (const game of data.games) {
-    const assessment = assessEndangerment(game);
+    const gameEnrichment = enrichment?.[game.id];
+    const assessment = assessEndangerment(game, gameEnrichment);
     counts[assessment.level]++;
   }
 
@@ -173,12 +212,28 @@ export async function getRiskLevelCounts(): Promise<RiskLevelCounts> {
 
 /**
  * Attach preservation endangerment assessment to every game in the list.
+ * If enrichment data is provided, it is passed to the assessment so salvaged
+ * games are correctly identified.
  */
-export function enrichGames(games: Game[]): EnrichedGame[] {
-  return games.map((game) => ({
-    ...game,
-    endangerment: assessEndangerment(game),
-  }));
+export function enrichGames(
+  games: Game[],
+  enrichment?: Record<number, GameEnrichment> | null
+): EnrichedGame[] {
+  return games.map((game) => {
+    const gameEnrichment = enrichment?.[game.id];
+    const endangerment = assessEndangerment(game, gameEnrichment);
+
+    return {
+      ...game,
+      // Merge enrichment fields onto the game object so UI can access them
+      modern_versions: game.modern_versions ?? gameEnrichment?.modern_versions,
+      exclude_from_at_risk:
+        game.exclude_from_at_risk ?? gameEnrichment?.exclude_from_at_risk,
+      exclusion_reason:
+        game.exclusion_reason ?? gameEnrichment?.exclusion_reason,
+      endangerment,
+    };
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -196,6 +251,14 @@ export interface GameQuery {
   publisher?: string;
   /** Risk level filter (exact match on endangerment level). */
   riskLevel?: EndangermentLevel;
+  /**
+   * Controls how salvaged games (those with widely-available modern versions)
+   * are included in results:
+   *   - undefined / "all"  — all games, no filtering (default)
+   *   - "exclude"           — hide salvaged games (show only at-risk)
+   *   - "only"              — show ONLY salvaged games
+   */
+  salvaged?: "all" | "exclude" | "only";
   /** Sort field. */
   sort?: "title" | "release_date" | "risk_score";
   /** Sort order. */
@@ -225,7 +288,8 @@ export interface GameQueryResult {
  */
 export async function queryGames(query: GameQuery): Promise<GameQueryResult> {
   const data = await loadGames();
-  let games = enrichGames(data.games);
+  const enrichment = await loadEnrichment();
+  let games = enrichGames(data.games, enrichment);
 
   // Apply title search
   if (query.search) {
@@ -251,6 +315,13 @@ export async function queryGames(query: GameQuery): Promise<GameQueryResult> {
   // Apply risk level filter
   if (query.riskLevel) {
     games = games.filter((g) => g.endangerment.level === query.riskLevel);
+  }
+
+  // Apply salvaged filter
+  if (query.salvaged === "exclude") {
+    games = games.filter((g) => !g.endangerment.salvagedByModernVersion);
+  } else if (query.salvaged === "only") {
+    games = games.filter((g) => g.endangerment.salvagedByModernVersion);
   }
 
   // Apply sorting — name is always a secondary tiebreaker.

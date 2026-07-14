@@ -37,6 +37,48 @@ export interface Game {
    */
   release_formats: string;
   releases: GameRelease[];
+  /**
+   * Optional enrichment data from the modern-version analysis.
+   * Only present when enrichment data has been loaded and merged.
+   */
+  modern_versions?: ModernVersion[];
+  exclude_from_at_risk?: boolean;
+  exclusion_reason?: string | null;
+}
+
+export interface ModernVersion {
+  /** IGDB game id of the related game. */
+  id: number;
+  name: string;
+  /** Type of relationship: "remake" | "remaster" | "port" | "expanded" */
+  relation: "remake" | "remaster" | "port" | "expanded";
+  platforms: string[];
+  risk_level: EndangermentLevel;
+  ecosystem_families: EcosystemFamily[];
+  /** True if this version is widely available and salvages the original. */
+  salvages_original: boolean;
+}
+
+/**
+ * Per-game enrichment data produced by the modern-version analysis.
+ */
+export interface GameEnrichment {
+  modern_versions: ModernVersion[];
+  exclude_from_at_risk: boolean;
+  exclusion_reason: string | null;
+}
+
+/**
+ * The full enrichment data file structure.
+ */
+export interface EnrichmentData {
+  metadata: {
+    source: string;
+    description: string;
+    total_games_enriched: number;
+    games_salvaged: number;
+  };
+  enrichment: Record<number, GameEnrichment>;
 }
 
 export interface GamesData {
@@ -88,6 +130,16 @@ export interface EndangermentAssessment {
   reasons: string[];
   /** Which ecosystem families the game's platforms belong to. */
   ecosystemFamilies: EcosystemFamily[];
+  /**
+   * Whether a widely-available modern remaster/remake/port salvages this
+   * game from its original risk level. When true, the game can be filtered
+   * out of at-risk reports.
+   */
+  salvagedByModernVersion: boolean;
+  /**
+   * Human-readable explanation when salvagedByModernVersion is true.
+   */
+  salvageReason: string | null;
 }
 
 /**

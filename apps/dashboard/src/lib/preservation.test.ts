@@ -6,7 +6,7 @@ import {
   getRiskLevelColors,
   RISK_LEVEL_ORDER,
 } from "./preservation";
-import type { Game } from "./types";
+import type { Game, GameEnrichment } from "./types";
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -191,6 +191,8 @@ describe("assessEndangerment", () => {
     expect(assessment.score).toBe(100);
     expect(assessment.reasons).toContain("Only released on PlayStation Vita");
     expect(assessment.ecosystemFamilies).toEqual(["Sony"]);
+    expect(assessment.salvagedByModernVersion).toBe(false);
+    expect(assessment.salvageReason).toBeNull();
   });
 
   it("does NOT assign Critical if the game has multiple platforms even in Sony", () => {
@@ -366,6 +368,133 @@ describe("assessEndangerment", () => {
     expect(Array.isArray(assessment.reasons)).toBe(true);
     expect(assessment.reasons.length).toBeGreaterThan(0);
     assessment.reasons.forEach((r) => expect(typeof r).toBe("string"));
+  });
+
+  // ---- Enrichment: Salvaged by Modern Version ----
+
+  it("flags a Critical game as salvaged when enrichment says so", () => {
+    const enrichment: GameEnrichment = {
+      modern_versions: [
+        {
+          id: 999,
+          name: "Test Game Remastered",
+          relation: "remaster",
+          platforms: ["PC (Microsoft Windows)", "Nintendo Switch", "PlayStation 5"],
+          risk_level: "Minimal",
+          ecosystem_families: ["PC", "Nintendo", "Sony"],
+          salvages_original: true,
+        },
+      ],
+      exclude_from_at_risk: true,
+      exclusion_reason: "Remaster available on PC/Switch/PS5",
+    };
+
+    const assessment = assessEndangerment(
+      makeGame({ platforms: ["PlayStation Vita"] }),
+      enrichment
+    );
+
+    expect(assessment.level).toBe("Critical"); // original risk preserved
+    expect(assessment.score).toBe(100);
+    expect(assessment.salvagedByModernVersion).toBe(true);
+    expect(assessment.salvageReason).toBe("Remaster available on PC/Switch/PS5");
+  });
+
+  it("flags a High-risk game as salvaged when enrichment says so", () => {
+    const enrichment: GameEnrichment = {
+      modern_versions: [
+        {
+          id: 999,
+          name: "Test Game PC Port",
+          relation: "port",
+          platforms: ["PC (Microsoft Windows)"],
+          risk_level: "Low",
+          ecosystem_families: ["PC", "Sony"],
+          salvages_original: true,
+        },
+      ],
+      exclude_from_at_risk: true,
+      exclusion_reason: "PC port available",
+    };
+
+    const assessment = assessEndangerment(
+      makeGame({ platforms: ["PlayStation Vita", "PlayStation 4"] }),
+      enrichment
+    );
+
+    expect(assessment.level).toBe("High");
+    expect(assessment.salvagedByModernVersion).toBe(true);
+    expect(assessment.salvageReason).toBe("PC port available");
+  });
+
+  it("does NOT flag as salvaged when enrichment exists but exclude_from_at_risk is false", () => {
+    const enrichment: GameEnrichment = {
+      modern_versions: [
+        {
+          id: 999,
+          name: "Test Game PS4 Remaster",
+          relation: "remaster",
+          platforms: ["PlayStation 4"],
+          risk_level: "High",
+          ecosystem_families: ["Sony"],
+          salvages_original: false,
+        },
+      ],
+      exclude_from_at_risk: false,
+      exclusion_reason: null,
+    };
+
+    const assessment = assessEndangerment(
+      makeGame({ platforms: ["PlayStation Vita"] }),
+      enrichment
+    );
+
+    expect(assessment.level).toBe("Critical");
+    expect(assessment.salvagedByModernVersion).toBe(false);
+    expect(assessment.salvageReason).toBeNull();
+  });
+
+  it("does NOT flag as salvaged when no enrichment is provided", () => {
+    const assessment = assessEndangerment(
+      makeGame({ platforms: ["PlayStation Vita"] })
+    );
+    expect(assessment.salvagedByModernVersion).toBe(false);
+    expect(assessment.salvageReason).toBeNull();
+  });
+
+  it("still reports correct risk level for a salvaged High-risk game", () => {
+    const enrichment: GameEnrichment = {
+      modern_versions: [],
+      exclude_from_at_risk: true,
+      exclusion_reason: "Available everywhere now",
+    };
+
+    const assessment = assessEndangerment(
+      makeGame({ platforms: ["PlayStation Vita", "PlayStation 3"] }),
+      enrichment
+    );
+
+    expect(assessment.level).toBe("High");
+    expect(assessment.salvagedByModernVersion).toBe(true);
+    // Salvage does not change the score or level, only adds metadata
+    expect(assessment.score).toBe(80);
+  });
+
+  it("salvages a Critical game but preserves its original reason", () => {
+    const enrichment: GameEnrichment = {
+      modern_versions: [],
+      exclude_from_at_risk: true,
+      exclusion_reason: "Modern port exists on PC",
+    };
+
+    const assessment = assessEndangerment(
+      makeGame({ platforms: ["PlayStation Vita"] }),
+      enrichment
+    );
+
+    expect(assessment.reasons).toContain("Only released on PlayStation Vita");
+    expect(assessment.salvagedByModernVersion).toBe(true);
+    expect(assessment.salvageReason).toBe("Modern port exists on PC");
   });
 });
 

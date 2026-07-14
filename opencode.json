@@ -1,0 +1,29 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "read": {
+      "**": "allow",
+      "docs/secret/**": "deny"
+    },
+    "write": {
+      "**": "allow",
+      "docs/secret/**": "deny"
+    },
+    "edit": {
+      "**": "allow",
+      "docs/secret/**": "deny"
+    }
+  },
+  "agent": {
+    "script-agent": {
+      "permission": {
+        "skill": {
+          "bash-generator": "allow",
+          "python-generator": "allow",
+          "ps-generator": "allow",
+          "zsh-generator": "allow"
+        }
+      }
+    }
+  }
+}

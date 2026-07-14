@@ -1,0 +1,33 @@
+## AI Agents Tools
+
+- Claude Code CLI (Claude App) [Anthropic] command line interface
+  - $20 -> latest model Haiku, Sonnet, Opus
+  - bank, gcash, paymaya
+- OpenAI Codex CLI (Codex) [OpenAI]
+  - 300php (Go) -> no agentic capability
+  - 1400php (Plus) -> agentic capable
+- Gemini CLI (Antigravity) [Google] IDE, Desktop App
+  - php, bank, gcash
+  - google subscription 250php -> no agentic capability
+  - google drive -> storage 200gb
+  - higher rate gemini
+  - 1400php - agentic capable
+    - google drive
+    - higher rate gemini
+
+- Github Copilot CLI, integration VScode
+  - claude, gpt, gemini
+  - limited rate, $10
+- Cursor cli, alternative to VScode, IDE
+  - $20 dollars php usd
+  - Composer capable
+  - claude, gpt, gemini, chinese model
+- OpenCode
+  - subscription - postpaid\* (rate limit, 5hours, weekly, monthly)
+  - api key - prepaid (top up)
+  - OpenCode Go (postpaid) -> $5 1st, $10
+    - no access to Claude, GPT and Gemini
+    - Deepseek, GLM, MiniMax, Kimi, Qwen Coder
+  - OpenCode Zen (prepaid)
+    - all AI model
+    - Claude, GPT, Gemini, Deepseek, GLM, MiniMax, Kimi, Qwen Coder

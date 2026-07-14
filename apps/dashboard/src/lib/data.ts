@@ -30,9 +30,16 @@ export async function loadGames(): Promise<GamesData> {
       game.publishers = [];
     }
     if (game.category === undefined || game.category === null) {
-      // All current source data was queried with `version_parent=null`,
-      // which means only base games (category 0). Default accordingly.
       game.category = 0;
+    }
+    if (game.is_version === undefined || game.is_version === null) {
+      game.is_version = false;
+    }
+    if (!game.version_title) {
+      game.version_title = "";
+    }
+    if (!game.release_formats) {
+      game.release_formats = "physical_and_digital";
     }
   }
 

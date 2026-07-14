@@ -69,19 +69,21 @@ PS_VITA_PLATFORM_ID: int = 46
 REQUEST_DELAY_SEC: float = 0.30
 PAGE_LIMIT: int = 500  # max results per page
 
-# Region codes used by IGDB (release_dates.region)
-#  1 = Europe    2 = North America    5 = Australia
-#  3 = Japan
-ENGLISH_REGIONS: set = {1, 2, 5}
-JAPAN_REGION: int = 3
-
-# Human-readable region labels (for the JSON output)
-REGION_LABELS: Dict[int, str] = {
-    1: "Europe",
-    2: "North America",
-    3: "Japan",
-    5: "Australia",
+# Region matching uses the ``name`` field from IGDB's /v4/regions endpoint
+# (accessed via ``release_dates.release_region.region.name``).
+# The old integer ``region`` enum is DEPRECATED and sparsely populated for Vita.
+ENGLISH_REGION_NAMES: set = {
+    "europe",
+    "north_america",
+    "australia",
+    "new zealand",
+    "worldwide",
 }
+JAPAN_REGION_NAME: str = "japan"
+
+# Global tally of release regions seen while processing games.
+# Example: {"worldwide": 120, "japan": 340}
+REGION_TALLY: Dict[str, int] = {}
 
 MAIN_GAME_CATEGORY: int = 0
 
@@ -254,8 +256,9 @@ def _fields_query() -> str:
         "total_rating,total_rating_count,rating,rating_count,"
         "cover.url,"
         "release_dates.category,release_dates.date,"
-        "release_dates.human,release_dates.platform,release_dates.region,"
-        "release_dates.status"
+        "release_dates.human,release_dates.platform,"
+        "release_dates.release_region.region,"
+        "release_dates.status.name"
     )
 
 
@@ -364,28 +367,40 @@ def _determine_release_formats(game: Dict[str, Any]) -> str:
 
 def _has_english_release(game: Dict[str, Any]) -> bool:
     """Return ``True`` if the game has at least one release in an
-    English-market region (Europe, North America, Australia)."""
+    English-market region (Europe, North America, Australia, New Zealand).
+
+    Uses the IGDB v4 ``release_region.region`` path which returns the
+    region string directly — the old integer ``region`` enum is deprecated.
+    """
     release_dates: List[Dict] = game.get("release_dates") or []
     if not release_dates:
         # Fallback: a non-null first_release_date *probably* means English
         return bool(game.get("first_release_date"))
 
-    if not any(rd.get("region") is not None for rd in release_dates):
-        # IGDB currently omits region for many Vita release_dates entries.
-        # Fall back to the broader release timestamp instead of excluding all data.
+    # Collect all region names present in the release data
+    region_names: set = set()
+    for rd in release_dates:
+        rr = rd.get("release_region") or {}
+        region = rr.get("region")
+        if region:
+            region_names.add(region)
+            REGION_TALLY[region] = REGION_TALLY.get(region, 0) + 1
+
+    if not region_names:
+        # IGDB may not have backfilled release_region for every Vita entry yet.
+        # Fall back to the broader release timestamp instead of excluding data.
         return bool(game.get("first_release_date"))
 
-    for rd in release_dates:
-        if rd.get("region") in ENGLISH_REGIONS:
-            return True
-    return False
+    return bool(region_names & ENGLISH_REGION_NAMES)
 
 
 def _has_japan_release(game: Dict[str, Any]) -> bool:
     """Return ``True`` if the game has a release date in Japan."""
     release_dates: List[Dict] = game.get("release_dates") or []
     for rd in release_dates:
-        if rd.get("region") == JAPAN_REGION:
+        rr = rd.get("release_region") or {}
+        region = rr.get("region")
+        if region == JAPAN_REGION_NAME:
             return True
     return False
 
@@ -425,18 +440,6 @@ def _clean_game(game: Dict[str, Any]) -> Dict[str, Any]:
         if ic.get("publisher"):
             publishers.append(company_name)
 
-    # Map IGDB ReleaseDateStatusEnum to human-readable labels
-    _STATUS_LABELS: Dict[int, str] = {
-        0: "released",
-        1: "alpha",
-        2: "beta",
-        3: "early_access",
-        4: "offline",
-        5: "cancelled",
-        6: "rumored",
-        7: "delisted",
-    }
-
     # Release dates – boiled down to a simple list with status info
     releases: List[Dict[str, str]] = []
     for rd in game.get("release_dates") or []:
@@ -444,25 +447,13 @@ def _clean_game(game: Dict[str, Any]) -> Dict[str, Any]:
             "date": rd.get("human") or "",
         }
 
-        # region is frequently omitted for Vita entries in IGDB;
-        # only include it when the API actually returned a value.
-        region_id = rd.get("region")
-        if region_id is not None:
-            release_entry["region"] = REGION_LABELS.get(
-                region_id, f"Region {region_id}"
-            )
-        else:
-            release_entry["region"] = ""
+        # release_dates.release_region.region returns the region as a string
+        region_name = rd.get("release_region", {}).get("region") or ""
+        release_entry["region"] = region_name
 
-        # status is also sparse – default to "released" when absent
-        # since most Vita release_date entries represent actual launches.
-        status_code = rd.get("status")
-        if status_code is not None:
-            release_entry["status"] = _STATUS_LABELS.get(
-                status_code, f"unknown({status_code})"
-            )
-        else:
-            release_entry["status"] = "released"
+        # release_dates.status.name returns the status as a string
+        status_name = rd.get("status", {}).get("name") or "released"
+        release_entry["status"] = status_name
 
         releases.append(release_entry)
 
@@ -498,9 +489,10 @@ def filter_games(
     """
     Client-side filtering loop.
 
-    - **Default**: keep only games with an English-market release.
-    - **``--japan-only``**: keep games released in Japan but **not** in any
-      English region (Japan-only Vita games).
+    - **Default**: keep games released in the English market that were
+      **not** released in Japan (Western-exclusive).
+    - **``--japan-only``**: keep games released in Japan that were **not**
+      released in any English region (Japan-exclusive).
     """
     filtered: List[Dict[str, Any]] = []
 
@@ -509,16 +501,15 @@ def filter_games(
         if category is not None and category != MAIN_GAME_CATEGORY:
             continue
 
-        if japan_only:
-            if not _has_japan_release(game):
-                continue
-            if _has_english_release(game):
-                continue  # not *Japan-exclusive* if it also hit the West
-        else:
-            if not _has_english_release(game):
-                continue
+        has_english = _has_english_release(game)
+        has_japan = _has_japan_release(game)
 
-        filtered.append(_clean_game(game))
+        if japan_only:
+            if has_japan and not has_english:
+                filtered.append(_clean_game(game))
+        else:
+            if has_english and not has_japan:
+                filtered.append(_clean_game(game))
 
     return filtered
 
@@ -609,7 +600,11 @@ def main() -> None:
     # Resolve credentials (exits on failure)
     client_id, token = resolve_credentials(args)
 
-    mode_label = "Japan-only games" if args.japan_only else "English-market games"
+    mode_label = (
+        "Japan-only games (no English release)"
+        if args.japan_only
+        else "English-market games (excluding Japan)"
+    )
 
     print("=" * 56)
     print("  IGDB PS Vita Games Fetcher")
@@ -631,8 +626,10 @@ def main() -> None:
     # 2. Filter client-side and clean the data
     # ------------------------------------------------------------------
     print(f"\n[2/2] Applying region filters ...")
+    print(f" Japan-only: {args.japan_only}")
     filtered = filter_games(raw_games, args.japan_only)
     print(f"  Matching games: {len(filtered)}")
+    print(f"  Region tally (all fetched release entries): {REGION_TALLY}")
 
     # ------------------------------------------------------------------
     # 3. Write JSON output
@@ -647,7 +644,7 @@ def main() -> None:
             {
                 "metadata": {
                     "source": "IGDB API v4",
-                    "query": "PS Vita games (all releases; category filtered client-side)",
+                    "query": "PS Vita games (English market, Japan excluded; category filtered client-side)",
                     "mode": mode_label,
                     "total": len(filtered),
                     "note": "release_formats is best-effort based on IGDB metadata heuristics",

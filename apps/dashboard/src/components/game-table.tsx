@@ -180,6 +180,20 @@ function getCategoryLabel(category: number | null): string {
   }
 }
 
+/**
+ * Convert a release_formats value to a human-readable label.
+ */
+function formatReleaseFormatLabel(format: string): string {
+  switch (format) {
+    case "physical_and_digital":
+      return "Physical + Digital";
+    case "digital_likely":
+      return "Digital Only";
+    default:
+      return format;
+  }
+}
+
 function GameDetailModal({
   game,
   onClose,
@@ -222,6 +236,16 @@ function GameDetailModal({
               </h2>
               <div className="mt-1 flex flex-wrap items-center gap-1.5">
                 <PlatformBadges platforms={game.platforms} />
+                {game.is_version && game.version_title && (
+                  <span className="inline-flex items-center rounded-full bg-purple-50 px-2 py-0.5 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10">
+                    {game.version_title}
+                  </span>
+                )}
+                {game.release_formats && (
+                  <span className="inline-flex items-center rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-600 ring-1 ring-inset ring-zinc-600/10">
+                    {formatReleaseFormatLabel(game.release_formats)}
+                  </span>
+                )}
                 {game.category !== null && game.category !== 0 && (
                   <span className="inline-flex items-center rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-700/10">
                     {contentTypeLabel}
@@ -460,7 +484,7 @@ function GameDetailModal({
                       Region
                     </th>
                     <th className="px-3 py-2 text-left font-medium text-zinc-600">
-                      Type
+                      Status
                     </th>
                   </tr>
                 </thead>

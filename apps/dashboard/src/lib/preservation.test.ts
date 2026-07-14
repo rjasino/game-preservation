@@ -30,6 +30,9 @@ function makeGame(overrides: Partial<Game> = {}): Game {
     category: 0,
     developers: ["Test Dev"],
     publishers: ["Test Pub"],
+    is_version: false,
+    version_title: "",
+    release_formats: "physical_and_digital",
     releases: [],
     ...overrides,
   };
@@ -111,6 +114,26 @@ describe("classifyPlatform", () => {
   it("is case-insensitive", () => {
     expect(classifyPlatform("playstation vita")).toBe("Sony");
     expect(classifyPlatform("PC (MICROSOFT WINDOWS)")).toBe("PC");
+  });
+
+  it("maps standalone Wii to Nintendo", () => {
+    expect(classifyPlatform("Wii")).toBe("Nintendo");
+  });
+
+  it("maps standalone GameCube to Nintendo", () => {
+    expect(classifyPlatform("GameCube")).toBe("Nintendo");
+  });
+
+  it("maps Nintendo GameCube to Nintendo", () => {
+    expect(classifyPlatform("Nintendo GameCube")).toBe("Nintendo");
+  });
+
+  it("maps Dreamcast to Other", () => {
+    expect(classifyPlatform("Dreamcast")).toBe("Other");
+  });
+
+  it("maps Arduboy to Other", () => {
+    expect(classifyPlatform("Arduboy")).toBe("Other");
   });
 });
 

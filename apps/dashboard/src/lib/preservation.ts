@@ -43,9 +43,11 @@ const PLATFORM_FAMILY_RULES: [EcosystemFamily, string[]][] = [
       "Nintendo 3DS",
       "Nintendo Wii U",
       "Nintendo Wii",
+      "Nintendo GameCube",
       "Nintendo DS",
       "Nintendo DSi",
-      "Nintendo GameCube",
+      "Wii",
+      "GameCube",
     ],
   ],
   [

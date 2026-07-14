@@ -1,16 +1,18 @@
-# PS Vita Exclusives – IGDB Fetcher
+# PS Vita Games – IGDB Fetcher
 
-Fetches **PS Vita exclusive** games from the [IGDB API](https://api-docs.igdb.com/) and
+Fetches **all PS Vita** games from the [IGDB API](https://api-docs.igdb.com/) and
 saves generated scripts and data under `.asd/artifacts`.
 
 ## What It Does
 
-- Queries IGDB for games released **only** on PS Vita (`platforms = [46]`).
-- Excludes ports, remasters, DLC, and bundles.
+- Queries IGDB for **all** games released on PS Vita (`platforms = [46]`).
+- Excludes DLC and bundles (keeps main games only).
 - Filters for games that were released in the **English market** (Europe, North
   America, Australia).
-- Optionally fetches **Japan-only** exclusives (games released in Japan but
+- Includes all regional variants, ports, and re-releases.
+- Optionally fetches **Japan-only** games (games released in Japan but
   never in an English-speaking region).
+- Adds metadata to help identify physical vs digital-only releases.
 - Outputs a clean JSON file with metadata, ratings, genres, cover art, and
   release-date details.
 
@@ -57,7 +59,7 @@ The script will **auto-generate** the token for you so you never have to deal
 with tokens manually:
 
 ```bash
-python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id YOUR_CLIENT_ID --client-secret YOUR_CLIENT_SECRET
+python .asd/artifacts/fetch_ps_vita_games.py --client-id YOUR_CLIENT_ID --client-secret YOUR_CLIENT_SECRET
 ```
 
 ### Alternative: provide a pre-existing Bearer Token
@@ -66,7 +68,7 @@ If you already have a token (e.g. from the IGDB website or a previous OAuth
 exchange), supply it directly:
 
 ```bash
-python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id YOUR_CLIENT_ID --token YOUR_ACCESS_TOKEN
+python .asd/artifacts/fetch_ps_vita_games.py --client-id YOUR_CLIENT_ID --token YOUR_ACCESS_TOKEN
 ```
 
 ### Environment variables / `.env` file
@@ -83,7 +85,7 @@ Or set them in your shell:
 ```cmd
 set IGDB_CLIENT_ID=YOUR_CLIENT_ID
 set IGDB_CLIENT_SECRET=YOUR_CLIENT_SECRET
-python .asd/artifacts/fetch_ps_vita_exclusives.py
+python .asd/artifacts/fetch_ps_vita_games.py
 ```
 
 The script resolves credentials in this order: **CLI flags → env vars → `.env`**.
@@ -93,19 +95,19 @@ It checks `.env` in the project root first, then `.asd/artifacts`.
 
 ```bash
 # Auto-generate token from Client Secret (recommended)
-python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id abc --client-secret xyz
+python .asd/artifacts/fetch_ps_vita_games.py --client-id abc --client-secret xyz
 
 # Use a manually-obtained Bearer Token
-python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id abc --token xyz
+python .asd/artifacts/fetch_ps_vita_games.py --client-id abc --token xyz
 
-# Japan-only exclusives (no English release)
-python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id abc --client-secret xyz --japan-only
+# Japan-only games (no English release)
+python .asd/artifacts/fetch_ps_vita_games.py --client-id abc --client-secret xyz --japan-only
 
 # Custom output path inside the artifact folder
-python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id abc --client-secret xyz --output vita_games.json
+python .asd/artifacts/fetch_ps_vita_games.py --client-id abc --client-secret xyz --output vita_games.json
 
 # Increase HTTP timeout (useful on slow connections)
-python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id abc --client-secret xyz --timeout 60
+python .asd/artifacts/fetch_ps_vita_games.py --client-id abc --client-secret xyz --timeout 60
 ```
 
 ### Full argument reference
@@ -116,7 +118,7 @@ python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id abc --client-secre
 | `--client-secret` | Twitch Client Secret – script auto-generates a token                                           | `IGDB_CLIENT_SECRET` |
 | `--token`         | Pre-existing Bearer Token _(optional if secret given)_                                         | `IGDB_TOKEN`         |
 | `--japan-only`    | Japan-exclusive Vita games (no English release)                                                | —                    |
-| `--output`        | Output JSON file path _(default: `.asd/artifacts/ps_vita_exclusives.json` for relative paths)_ | —                    |
+| `--output`        | Output JSON file path _(default: `.asd/artifacts/ps_vita_games.json` for relative paths)_ | —                    |
 | `--timeout`       | HTTP request timeout in seconds _(default: 30)_                                                | —                    |
 
 > You must provide **either** `--client-secret` **or** `--token` (or their env
@@ -130,9 +132,10 @@ The JSON file contains a `metadata` block and a `games` array:
 {
   "metadata": {
     "source": "IGDB API v4",
-    "query": "PS Vita exclusives (category=0, version_parent=null)",
-    "mode": "English-market exclusives",
-    "total": 150
+    "query": "PS Vita games (all releases; category filtered client-side)",
+    "mode": "English-market games",
+    "total": 150,
+    "note": "release_formats is best-effort based on IGDB metadata heuristics"
   },
   "games": [
     {
@@ -148,16 +151,22 @@ The JSON file contains a `metadata` block and a `games` array:
       "genres": ["Adventure", "RPG"],
       "themes": ["Fantasy"],
       "game_modes": ["Single player"],
+      "platforms": ["PlayStation Vita"],
+      "developers": ["Studio Name"],
+      "publishers": ["Publisher Name"],
+      "is_version": false,
+      "version_title": "",
+      "release_formats": "physical_and_digital",
       "releases": [
         {
           "date": "2012-12-17",
           "region": "North America",
-          "type": "released"
+          "status": "released"
         },
         {
           "date": "2012-12-19",
           "region": "Europe",
-          "type": "released"
+          "status": "released"
         }
       ]
     }
@@ -171,11 +180,10 @@ The script applies these criteria sequentially:
 
 | Step | Criterion                                        | Where applied      |
 | ---- | ------------------------------------------------ | ------------------ |
-| 1    | Platforms = `[46]` **only** (PS Vita exclusive)  | IGDB server-side   |
-| 2    | `category = 0` (main game, not DLC / bundle)     | IGDB server-side   |
-| 3    | `version_parent = null` (not a port or remaster) | IGDB server-side   |
-| 4    | Released in Europe, North America, or Australia  | Client-side filter |
-| 5\*  | Released in Japan **and not** in English regions | Client-side filter |
+| 1    | Platforms = `[46]` **only** (PS Vita games)      | IGDB server-side   |
+| 2    | `category = 0` (main game, not DLC / bundle)     | Client-side filter |
+| 3    | Released in Europe, North America, or Australia  | Client-side filter |
+| 4\*  | Released in Japan **and not** in English regions | Client-side filter |
 
 \* Only when `--japan-only` is used.
 
@@ -184,6 +192,6 @@ The script applies these criteria sequentially:
 - IGDB's free tier allows ~4 requests per second. The script automatically
   adds a short delay between pages and retries on rate-limit (HTTP 429).
 - A total of 1 000–2 000 PS Vita games exist in IGDB. After filtering, expect
-  roughly **150–300** English-market exclusives.
+  roughly **150–500** English-market games.
 - Cover-art URLs use the `t_cover_big` size. Replace with `t_1080p`,
   `t_720p`, or `t_thumb` in the output file if you need a different size.

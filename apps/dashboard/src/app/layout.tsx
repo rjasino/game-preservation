@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PS Vita Exclusives Dashboard",
+  title: "PS Vita Game Preservation Dashboard",
   description:
-    "Browse 2,129 PlayStation Vita exclusive games sourced from IGDB. Explore covers, genres, ratings, themes, and release details.",
+    "Explore 2,129 PlayStation Vita games sourced from IGDB with preservation risk analysis. Browse by platform ecosystems, risk levels, developers, and more.",
 };
 
 export default function RootLayout({

@@ -4,6 +4,18 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useTransition } from "react";
 
 const SORT_OPTIONS = [
+  {
+    value: "risk_score-desc",
+    label: "Risk Score (Highest First)",
+    field: "risk_score",
+    order: "desc",
+  },
+  {
+    value: "risk_score-asc",
+    label: "Risk Score (Lowest First)",
+    field: "risk_score",
+    order: "asc",
+  },
   { value: "title-asc", label: "Title (A \u2013 Z)", field: "title", order: "asc" },
   { value: "title-desc", label: "Title (Z \u2013 A)", field: "title", order: "desc" },
   {
@@ -62,7 +74,7 @@ export function SortSelect() {
         onChange={(e) => handleChange(e.target.value)}
         className="rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-sm text-zinc-700 focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-200"
       >
-        <option value="">Default</option>
+        <option value="">Default (Highest Risk)</option>
         {SORT_OPTIONS.map((opt) => (
           <option key={opt.value} value={opt.value}>
             {opt.label}

@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 """
-IGDB PS Vita Exclusives Fetcher
-================================
+IGDB PS Vita Games Fetcher
+===========================
 
-Fetches PS Vita exclusive games from the IGDB API (https://api-docs.igdb.com/)
+Fetches ALL PlayStation Vita games from the IGDB API (https://api-docs.igdb.com/)
 that meet the following criteria:
 
-    - PS Vita exclusives (platform ID 46)
-    - No port or remastered release to other platforms
-    - Locked to PlayStation's ecosystem
-    - Released (physical and/or digital)
-    - Released to the English market
+    - All PS Vita games ever released (platform ID 46)
+    - Released to the English market (Europe, North America, Australia)
+    - Includes both physical (retail cartridge) and digital (PSN) releases
+    - Metadata added to help identify physical-only vs digital-only releases
     - Optional: Japan-market exclusives only
     - Includes all platforms each game was released on (not just PS Vita)
 
@@ -248,13 +247,15 @@ def _fields_query() -> str:
     """Return the comma-separated list of fields to request from IGDB."""
     return (
         "name,summary,first_release_date,slug,url,"
+        "category,version_title,version_parent,"
         "genres.name,themes.name,game_modes.name,platforms.name,"
         "involved_companies.company.name,involved_companies.developer,"
         "involved_companies.publisher,"
         "total_rating,total_rating_count,rating,rating_count,"
         "cover.url,"
         "release_dates.category,release_dates.date,"
-        "release_dates.human,release_dates.platform,release_dates.region"
+        "release_dates.human,release_dates.platform,release_dates.region,"
+        "release_dates.status"
     )
 
 
@@ -263,10 +264,12 @@ def fetch_all_games(
 ) -> List[Dict[str, Any]]:
     """
     Paginate through the IGDB ``/games`` endpoint and return every PS Vita
-    exclusive that meets the initial server-side filters:
+    game that meets the initial server-side filter:
 
-    * ``platforms = (46)``      → **only** PS Vita
-    * ``version_parent = null`` → not a port, remaster, or regional variant
+    * ``platforms = (46)`` → **only** PS Vita
+
+    Unlike the previous query, **no** ``version_parent`` filter is applied,
+    so all regional variants, ports, and re-releases are included.
 
     The ``category`` field is inconsistently populated for Vita records in IGDB,
     so main-game filtering happens client-side instead of in the query.
@@ -279,8 +282,7 @@ def fetch_all_games(
     while True:
         query = (
             f"fields {fields};"
-            f"where platforms = ({PS_VITA_PLATFORM_ID})"
-            f" & version_parent = null;"
+            f"where platforms = ({PS_VITA_PLATFORM_ID});"
             f"sort first_release_date desc;"
             f"limit {PAGE_LIMIT};"
             f"offset {offset};"
@@ -308,6 +310,56 @@ def fetch_all_games(
 # ============================================================================
 # Post-query filtering & data cleaning
 # ============================================================================
+
+
+def _determine_release_formats(game: Dict[str, Any]) -> str:
+    """
+    Best-effort heuristic to classify a PS Vita game's release format.
+
+    IGDB does **not** expose an explicit physical/digital flag, so this
+    function uses available metadata to produce a reasonable guess:
+
+    * ``"physical_and_digital"`` – likely had both cart & PSN releases
+    * ``"digital_likely"``      – no evidence of a physical release
+    * ``"unknown"``             – not enough data to decide
+
+    Heuristic rules (applied in order):
+        1. Games that are a **version** of another game (``version_parent``
+           is not null) are assumed digital-only – these are typically
+           regional variants, special editions, or PSN-only re-releases.
+        2. If the game has at least one ``release_dates`` entry targeting
+           the PS Vita platform, we assume a physical cartridge release
+           existed (Vita-native release-date records are the best proxy
+           available — ``status`` and ``region`` fields are often omitted
+           by IGDB for Vita entries).
+        3. Otherwise fall back to ``"digital_likely"`` (since all PS Vita
+           games were available digitally via PSN).
+    """
+    # Versions / variants are digital-only by convention
+    if game.get("version_parent"):
+        return "digital_likely"
+
+    release_dates: List[Dict] = game.get("release_dates") or []
+
+    # Look for at least one release-date entry on the Vita platform.
+    # We do NOT check ``status`` here — IGDB frequently omits ``status``
+    # and ``region`` for PS Vita entries.  A release-date record whose
+    # ``platform`` is 46 (PS Vita) is the most reliable indicator that
+    # the game actually shipped on the platform.
+    has_vita_release = any(
+        rd.get("platform") == PS_VITA_PLATFORM_ID for rd in release_dates
+    )
+
+    if has_vita_release:
+        return "physical_and_digital"
+
+    # If we have release dates but none specifically on Vita,
+    # it is still a Vita game (the query filtered by platform=46),
+    # but the release metadata is sparse — treat as digital-only.
+    if release_dates:
+        return "digital_likely"
+
+    return "unknown"
 
 
 def _has_english_release(game: Dict[str, Any]) -> bool:
@@ -373,18 +425,49 @@ def _clean_game(game: Dict[str, Any]) -> Dict[str, Any]:
         if ic.get("publisher"):
             publishers.append(company_name)
 
-    # Release dates – boiled down to a simple list
+    # Map IGDB ReleaseDateStatusEnum to human-readable labels
+    _STATUS_LABELS: Dict[int, str] = {
+        0: "released",
+        1: "alpha",
+        2: "beta",
+        3: "early_access",
+        4: "offline",
+        5: "cancelled",
+        6: "rumored",
+        7: "delisted",
+    }
+
+    # Release dates – boiled down to a simple list with status info
     releases: List[Dict[str, str]] = []
     for rd in game.get("release_dates") or []:
-        region_id: int = rd.get("region", 0)
-        region_name: str = REGION_LABELS.get(region_id, f"Region {region_id}")
-        releases.append(
-            {
-                "date": rd.get("human") or "",
-                "region": region_name,
-                "type": "released" if rd.get("category") == 0 else "other",
-            }
-        )
+        release_entry: Dict[str, str] = {
+            "date": rd.get("human") or "",
+        }
+
+        # region is frequently omitted for Vita entries in IGDB;
+        # only include it when the API actually returned a value.
+        region_id = rd.get("region")
+        if region_id is not None:
+            release_entry["region"] = REGION_LABELS.get(
+                region_id, f"Region {region_id}"
+            )
+        else:
+            release_entry["region"] = ""
+
+        # status is also sparse – default to "released" when absent
+        # since most Vita release_date entries represent actual launches.
+        status_code = rd.get("status")
+        if status_code is not None:
+            release_entry["status"] = _STATUS_LABELS.get(
+                status_code, f"unknown({status_code})"
+            )
+        else:
+            release_entry["status"] = "released"
+
+        releases.append(release_entry)
+
+    # Determine physical / digital release format (best-effort heuristic)
+    release_formats = _determine_release_formats(game)
 
     return {
         "id": game.get("id"),
@@ -402,6 +485,9 @@ def _clean_game(game: Dict[str, Any]) -> Dict[str, Any]:
         "platforms": platforms,
         "developers": developers,
         "publishers": publishers,
+        "is_version": bool(game.get("version_parent")),
+        "version_title": game.get("version_title") or "",
+        "release_formats": release_formats,
         "releases": releases,
     }
 
@@ -414,7 +500,7 @@ def filter_games(
 
     - **Default**: keep only games with an English-market release.
     - **``--japan-only``**: keep games released in Japan but **not** in any
-      English region (true Japan-only Vita exclusives).
+      English region (Japan-only Vita games).
     """
     filtered: List[Dict[str, Any]] = []
 
@@ -445,20 +531,20 @@ def filter_games(
 def _parse_args() -> argparse.Namespace:
     """Define and parse command-line arguments."""
     parser = argparse.ArgumentParser(
-        description="Fetch PS Vita exclusive games from the IGDB API.",
+        description="Fetch all PS Vita games from the IGDB API.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=(
             "examples:\n"
             "  # Use Client-ID + Client Secret (script auto-generates the token)\n"
-            "  python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id YOUR_ID --client-secret YOUR_SECRET\n\n"
+            "  python .asd/artifacts/fetch_ps_vita_games.py --client-id YOUR_ID --client-secret YOUR_SECRET\n\n"
             "  # Use a pre-existing Bearer Token\n"
-            "  python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id YOUR_ID --token YOUR_TOKEN\n\n"
-            "  # Japan-only exclusives\n"
-            "  python .asd/artifacts/fetch_ps_vita_exclusives.py --client-id YOUR_ID --client-secret YOUR_SECRET --japan-only\n\n"
+            "  python .asd/artifacts/fetch_ps_vita_games.py --client-id YOUR_ID --token YOUR_TOKEN\n\n"
+            "  # Japan-only games\n"
+            "  python .asd/artifacts/fetch_ps_vita_games.py --client-id YOUR_ID --client-secret YOUR_SECRET --japan-only\n\n"
             "  # Environment variables (no CLI flags needed)\n"
             "  set IGDB_CLIENT_ID=YOUR_ID\n"
             "  set IGDB_CLIENT_SECRET=YOUR_SECRET\n"
-            "  python .asd/artifacts/fetch_ps_vita_exclusives.py\n"
+            "  python .asd/artifacts/fetch_ps_vita_games.py\n"
         ),
     )
 
@@ -495,11 +581,11 @@ def _parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--output",
-        default="ps_vita_exclusives.json",
+        default="ps_vita_games.json",
         help=(
             "Output JSON file path. "
             "Relative paths are resolved from '.asd/artifacts'. "
-            "Defaults to '.asd/artifacts/ps_vita_exclusives.json'."
+            "Defaults to '.asd/artifacts/ps_vita_games.json'."
         ),
     )
     parser.add_argument(
@@ -523,12 +609,10 @@ def main() -> None:
     # Resolve credentials (exits on failure)
     client_id, token = resolve_credentials(args)
 
-    mode_label = (
-        "Japan-only exclusives" if args.japan_only else "English-market exclusives"
-    )
+    mode_label = "Japan-only games" if args.japan_only else "English-market games"
 
     print("=" * 56)
-    print("  IGDB PS Vita Exclusive Fetcher")
+    print("  IGDB PS Vita Games Fetcher")
     print(f"  Mode: {mode_label}")
     print(f"  Output: {args.output}")
     print("=" * 56)
@@ -563,9 +647,10 @@ def main() -> None:
             {
                 "metadata": {
                     "source": "IGDB API v4",
-                    "query": "PS Vita exclusives (version_parent=null; category filtered client-side)",
+                    "query": "PS Vita games (all releases; category filtered client-side)",
                     "mode": mode_label,
                     "total": len(filtered),
+                    "note": "release_formats is best-effort based on IGDB metadata heuristics",
                 },
                 "games": filtered,
             },

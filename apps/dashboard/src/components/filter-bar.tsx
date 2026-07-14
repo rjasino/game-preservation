@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useTransition } from "react";
+import type { RiskLevelCounts } from "@/lib/data";
 
 interface FilterBarProps {
   genres: string[];
@@ -10,6 +11,7 @@ interface FilterBarProps {
   publishers: string[];
   categoryCounts: { base: number; dlc: number };
   hasDlc: boolean;
+  riskLevelCounts: RiskLevelCounts;
 }
 
 export function FilterBar({
@@ -19,6 +21,7 @@ export function FilterBar({
   publishers,
   categoryCounts,
   hasDlc,
+  riskLevelCounts,
 }: FilterBarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -29,6 +32,7 @@ export function FilterBar({
   const currentContentType = searchParams.get("contentType") ?? "";
   const currentDeveloper = searchParams.get("developer") ?? "";
   const currentPublisher = searchParams.get("publisher") ?? "";
+  const currentRiskLevel = searchParams.get("riskLevel") ?? "";
 
   const updateParam = useCallback(
     (key: string, value: string) => {
@@ -45,9 +49,49 @@ export function FilterBar({
     [router, searchParams]
   );
 
+  const totalGames =
+    riskLevelCounts.Critical +
+    riskLevelCounts.High +
+    riskLevelCounts.Medium +
+    riskLevelCounts.Low +
+    riskLevelCounts.Minimal;
+
   return (
     <div className="rounded-lg border border-zinc-200 bg-white p-4">
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
+        {/* Risk Level filter */}
+        <div>
+          <label
+            htmlFor="filter-risk-level"
+            className="mb-1 block text-xs font-medium text-zinc-500"
+          >
+            Risk Level
+          </label>
+          <select
+            id="filter-risk-level"
+            value={currentRiskLevel}
+            onChange={(e) => updateParam("riskLevel", e.target.value)}
+            className="w-full rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-200"
+          >
+            <option value="">All ({totalGames})</option>
+            <option value="Critical">
+              Critical ({riskLevelCounts.Critical})
+            </option>
+            <option value="High">
+              High ({riskLevelCounts.High})
+            </option>
+            <option value="Medium">
+              Medium ({riskLevelCounts.Medium})
+            </option>
+            <option value="Low">
+              Low ({riskLevelCounts.Low})
+            </option>
+            <option value="Minimal">
+              Minimal ({riskLevelCounts.Minimal})
+            </option>
+          </select>
+        </div>
+
         {/* Content Type filter */}
         <div>
           <label
@@ -76,6 +120,7 @@ export function FilterBar({
             </option>
           </select>
         </div>
+
         {/* Genre filter */}
         <div>
           <label

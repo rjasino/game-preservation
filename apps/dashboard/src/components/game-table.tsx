@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import type { Game } from "@/lib/types";
+import type { EnrichedGame } from "@/lib/types";
+import { getRiskLevelColors } from "@/lib/preservation";
 
 interface GameTableProps {
-  games: Game[];
+  games: EnrichedGame[];
 }
 
 export function GameTable({ games }: GameTableProps) {
-  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const [selectedGame, setSelectedGame] = useState<EnrichedGame | null>(null);
 
   if (games.length === 0) {
     return (
@@ -40,7 +41,10 @@ export function GameTable({ games }: GameTableProps) {
             <tr className="border-b border-zinc-200 bg-zinc-50">
               <th className="px-4 py-3 font-semibold text-zinc-700">Cover</th>
               <th className="px-4 py-3 font-semibold text-zinc-700">Name</th>
-              <th className="px-4 py-3 font-semibold text-zinc-700">Genre</th>
+              <th className="px-4 py-3 font-semibold text-zinc-700">Risk</th>
+              <th className="px-4 py-3 font-semibold text-zinc-700 hidden lg:table-cell">
+                Genre
+              </th>
               <th className="px-4 py-3 font-semibold text-zinc-700 hidden lg:table-cell">
                 Developer
               </th>
@@ -81,7 +85,10 @@ export function GameTable({ games }: GameTableProps) {
                 <td className="max-w-64 px-4 py-3 font-medium text-zinc-900 truncate">
                   {game.name}
                 </td>
-                <td className="px-4 py-3 text-zinc-600">
+                <td className="px-4 py-3">
+                  <RiskBadge level={game.endangerment.level} score={game.endangerment.score} />
+                </td>
+                <td className="px-4 py-3 text-zinc-600 hidden lg:table-cell">
                   {game.genres.length > 0
                     ? game.genres.join(", ")
                     : "\u2014"}
@@ -107,6 +114,29 @@ export function GameTable({ games }: GameTableProps) {
         />
       )}
     </>
+  );
+}
+
+/**
+ * Renders a coloured badge for the risk level and score.
+ */
+function RiskBadge({
+  level,
+  score,
+}: {
+  level: string;
+  score: number;
+}) {
+  const colors = getRiskLevelColors(level as Parameters<typeof getRiskLevelColors>[0]);
+
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${colors.bg} ${colors.text} ${colors.ring}`}
+      title={`Score: ${score} \u2014 ${level}`}
+    >
+      {level}
+      <span className="opacity-60 tabular-nums">{score}</span>
+    </span>
   );
 }
 
@@ -137,8 +167,6 @@ function PlatformBadges({ platforms }: { platforms: string[] }) {
 
 /**
  * Map IGDB category id to a human-readable label.
- * IGDB categories: 0=main_game, 1=dlc_addon, 2=expansion,
- *                   3=bundle, 4=standalone_expansion, …
  */
 function getCategoryLabel(category: number | null): string {
   if (category === null) return "Unknown";
@@ -156,10 +184,12 @@ function GameDetailModal({
   game,
   onClose,
 }: {
-  game: Game;
+  game: EnrichedGame;
   onClose: () => void;
 }) {
   const contentTypeLabel = getCategoryLabel(game.category);
+  const { endangerment } = game;
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
@@ -213,6 +243,49 @@ function GameDetailModal({
 
         {/* Body */}
         <div className="space-y-5 px-6 py-5">
+          {/* --- Preservation Risk Section --- */}
+          <section className="rounded-lg border border-zinc-200 bg-zinc-50 p-4">
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              Preservation Risk
+            </h3>
+            <div className="flex flex-wrap items-center gap-3">
+              <RiskBadge level={endangerment.level} score={endangerment.score} />
+              <span className="text-xs text-zinc-400">
+                Score: <span className="font-semibold text-zinc-700">{endangerment.score}</span>
+              </span>
+            </div>
+
+            {/* Reasons */}
+            {endangerment.reasons.length > 0 && (
+              <ul className="mt-3 space-y-1">
+                {endangerment.reasons.map((reason, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-2 text-xs text-zinc-600"
+                  >
+                    <span className="mt-0.5 flex-shrink-0 text-zinc-400">&#x2022;</span>
+                    {reason}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {/* Ecosystem Families */}
+            {endangerment.ecosystemFamilies.length > 0 && (
+              <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                <span className="text-xs text-zinc-500">Ecosystems:</span>
+                {endangerment.ecosystemFamilies.map((family) => (
+                  <span
+                    key={family}
+                    className="inline-flex rounded-md bg-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-700"
+                  >
+                    {family}
+                  </span>
+                ))}
+              </div>
+            )}
+          </section>
+
           {/* Summary */}
           {game.summary && (
             <section>
@@ -399,7 +472,7 @@ function GameDetailModal({
                     >
                       <td className="px-3 py-2 text-zinc-700">{release.date}</td>
                       <td className="px-3 py-2 text-zinc-500">{release.region}</td>
-                      <td className="px-3 py-2 text-zinc-500 capitalize">{release.type}</td>
+                      <td className="px-3 py-2 text-zinc-500 capitalize">{release.status}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import type { Game, GamesData } from "./types";
+import type { Game, GamesData, EndangermentLevel, EnrichedGame } from "./types";
+import { assessEndangerment, RISK_LEVEL_ORDER } from "./preservation";
 
 let cachedData: GamesData | null = null;
 
@@ -126,6 +127,57 @@ export async function getCategoryCounts(): Promise<CategoryCounts> {
   return { base, dlc };
 }
 
+// ---------------------------------------------------------------------------
+// Risk Level Counts
+// ---------------------------------------------------------------------------
+
+export interface RiskLevelCounts {
+  Critical: number;
+  High: number;
+  Medium: number;
+  Low: number;
+  Minimal: number;
+}
+
+/**
+ * Count how many games fall into each endangerment level.
+ */
+export async function getRiskLevelCounts(): Promise<RiskLevelCounts> {
+  const data = await loadGames();
+  const counts: RiskLevelCounts = {
+    Critical: 0,
+    High: 0,
+    Medium: 0,
+    Low: 0,
+    Minimal: 0,
+  };
+
+  for (const game of data.games) {
+    const assessment = assessEndangerment(game);
+    counts[assessment.level]++;
+  }
+
+  return counts;
+}
+
+// ---------------------------------------------------------------------------
+// Game Enrichment
+// ---------------------------------------------------------------------------
+
+/**
+ * Attach preservation endangerment assessment to every game in the list.
+ */
+export function enrichGames(games: Game[]): EnrichedGame[] {
+  return games.map((game) => ({
+    ...game,
+    endangerment: assessEndangerment(game),
+  }));
+}
+
+// ---------------------------------------------------------------------------
+// Query Interface & Implementation
+// ---------------------------------------------------------------------------
+
 export interface GameQuery {
   /** Title search (case-insensitive substring match). */
   search?: string;
@@ -139,24 +191,27 @@ export interface GameQuery {
   developer?: string;
   /** Publisher search (case-insensitive substring match). */
   publisher?: string;
+  /** Risk level filter (exact match on endangerment level). */
+  riskLevel?: EndangermentLevel;
   /** Sort field. */
-  sort?: "title" | "release_date";
+  sort?: "title" | "release_date" | "risk_score";
   /** Sort order. */
   order?: "asc" | "desc";
 }
 
 export interface GameQueryResult {
-  games: Game[];
+  games: EnrichedGame[];
   total: number;
 }
 
 /**
  * Query games with optional filtering and sorting.
  * All filters are applied as AND conditions.
+ * Games are always enriched with preservation risk data.
  */
 export async function queryGames(query: GameQuery): Promise<GameQueryResult> {
   const data = await loadGames();
-  let games = data.games;
+  let games = enrichGames(data.games);
 
   // Apply title search
   if (query.search) {
@@ -176,10 +231,8 @@ export async function queryGames(query: GameQuery): Promise<GameQueryResult> {
 
   // Apply content type filter
   if (query.contentType === "base") {
-    // IGDB category 0 = main_game
     games = games.filter((g) => g.category === 0);
   } else if (query.contentType === "dlc") {
-    // IGDB categories 1 (dlc_addon), 2 (expansion), 3 (bundle), 4 (standalone_expansion)
     games = games.filter((g) => g.category !== null && g.category >= 1 && g.category <= 4);
   }
 
@@ -193,22 +246,41 @@ export async function queryGames(query: GameQuery): Promise<GameQueryResult> {
     games = games.filter((g) => g.publishers.includes(query.publisher!));
   }
 
+  // Apply risk level filter
+  if (query.riskLevel) {
+    games = games.filter((g) => g.endangerment.level === query.riskLevel);
+  }
+
   // Apply sorting
   if (query.sort) {
     const order = query.order === "asc" ? 1 : -1;
 
     games = [...games].sort((a, b) => {
-      if (query.sort === "title") {
-        return order * a.name.localeCompare(b.name);
+      switch (query.sort) {
+        case "title":
+          return order * a.name.localeCompare(b.name);
+
+        case "release_date": {
+          const dateA = a.first_release_date || 0;
+          const dateB = b.first_release_date || 0;
+          return order * (dateA - dateB);
+        }
+
+        case "risk_score": {
+          // Higher score = more endangered.
+          // "asc" → least endangered first, "desc" → most endangered first.
+          return order * (b.endangerment.score - a.endangerment.score);
+        }
+
+        default:
+          return 0;
       }
-      // release_date sort: treat 0 (unknown) as the distant past
-      if (query.sort === "release_date") {
-        const dateA = a.first_release_date || 0;
-        const dateB = b.first_release_date || 0;
-        return order * (dateA - dateB);
-      }
-      return 0;
     });
+  } else {
+    // Default sort: highest risk first
+    games = [...games].sort(
+      (a, b) => b.endangerment.score - a.endangerment.score
+    );
   }
 
   return { games, total: games.length };

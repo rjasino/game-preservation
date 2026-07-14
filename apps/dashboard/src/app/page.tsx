@@ -1,5 +1,15 @@
 import { Suspense } from "react";
-import { queryGames, getUniqueGenres, getUniquePlatforms, getUniqueDevelopers, getUniquePublishers, getCategoryCounts } from "@/lib/data";
+import {
+  queryGames,
+  getUniqueGenres,
+  getUniquePlatforms,
+  getUniqueDevelopers,
+  getUniquePublishers,
+  getCategoryCounts,
+  getRiskLevelCounts,
+} from "@/lib/data";
+import type { EndangermentLevel } from "@/lib/types";
+import { getRiskLevelColors, RISK_LEVEL_ORDER } from "@/lib/preservation";
 import { GameTable } from "@/components/game-table";
 import { SearchInput } from "@/components/search-input";
 import { FilterBar } from "@/components/filter-bar";
@@ -13,6 +23,7 @@ interface PageProps {
     contentType?: string;
     developer?: string;
     publisher?: string;
+    riskLevel?: string;
     sort?: string;
     order?: string;
   }>;
@@ -27,42 +38,94 @@ export default async function DashboardPage({ searchParams }: PageProps) {
     contentType = "",
     developer = "",
     publisher = "",
+    riskLevel = "",
     sort = "",
     order = "",
   } = params;
 
-  // Load filter options from data (these are lightweight)
+  // Load filter options and risk counts from data (these are lightweight)
   const genres = await getUniqueGenres();
   const platforms = await getUniquePlatforms();
   const developers = await getUniqueDevelopers();
   const publishers = await getUniquePublishers();
   const categoryCounts = await getCategoryCounts();
+  const riskCounts = await getRiskLevelCounts();
 
   const hasDlc = categoryCounts.dlc > 0;
+  const totalGames =
+    riskCounts.Critical +
+    riskCounts.High +
+    riskCounts.Medium +
+    riskCounts.Low +
+    riskCounts.Minimal;
 
   // Count active filters for the summary
-  const activeFilters = [genre, platform, contentType, developer, publisher].filter(Boolean).length;
+  const activeFilters = [
+    genre,
+    platform,
+    contentType,
+    developer,
+    publisher,
+    riskLevel,
+  ].filter(Boolean).length;
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
       {/* Header */}
       <header className="mb-8">
         <h1 className="text-2xl font-bold tracking-tight text-zinc-900 sm:text-3xl">
-          PS Vita Exclusive Games
+          PS Vita Game Preservation
         </h1>
         <p className="mt-1.5 text-sm text-zinc-500">
           Browse and explore{" "}
-          <span className="font-semibold text-zinc-700">2,129</span> games
-          available exclusively on PlayStation Vita.
+          <span className="font-semibold text-zinc-700">
+            {totalGames.toLocaleString()}
+          </span>{" "}
+          games available on PlayStation Vita.
         </p>
       </header>
+
+      {/* Risk Level Summary Bar */}
+      <section className="mb-6 rounded-lg border border-zinc-200 bg-white p-4">
+        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+          Preservation Risk Overview
+        </h2>
+        <div className="flex flex-wrap gap-2">
+          {RISK_LEVEL_ORDER.map((level) => {
+            const count = riskCounts[level];
+            const colors = getRiskLevelColors(level);
+            const isActive = riskLevel === level;
+
+            return (
+              <a
+                key={level}
+                href={
+                  isActive
+                    ? `?${buildParamString(params, "riskLevel", "")}`
+                    : `?${buildParamString(params, "riskLevel", level)}`
+                }
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset transition-colors ${
+                  colors.bg
+                } ${colors.text} ${colors.ring} ${
+                  isActive
+                    ? "ring-2 ring-offset-1"
+                    : "hover:ring-2"
+                }`}
+              >
+                {level}
+                <span className="tabular-nums opacity-75">{count}</span>
+              </a>
+            );
+          })}
+        </div>
+      </section>
 
       {/* Search + Filter Bar */}
       <div className="mb-6 space-y-4">
         {/* Title search */}
         <SearchInput defaultValue={q} />
 
-        {/* Genre / Platform / Content Type / Developer / Publisher filters */}
+        {/* All filters */}
         <FilterBar
           genres={genres}
           platforms={platforms}
@@ -70,6 +133,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           publishers={publishers}
           categoryCounts={categoryCounts}
           hasDlc={hasDlc}
+          riskLevelCounts={riskCounts}
         />
       </div>
 
@@ -82,14 +146,38 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           contentType={contentType}
           developer={developer}
           publisher={publisher}
+          riskLevel={riskLevel}
           sort={sort}
           order={order}
           activeFilters={activeFilters}
+          totalGames={totalGames}
         />
       </Suspense>
     </div>
   );
 }
+
+/** Build a query string by setting or removing a single param on top of existing params. */
+function buildParamString(
+  current: Record<string, string>,
+  key: string,
+  value: string
+): string {
+  const next = new URLSearchParams();
+  for (const [k, v] of Object.entries(current)) {
+    if (v && k !== "riskLevel") {
+      next.set(k, v);
+    }
+  }
+  if (value) {
+    next.set(key, value);
+  }
+  return next.toString();
+}
+
+// ---------------------------------------------------------------------------
+// Games List (server component inside Suspense)
+// ---------------------------------------------------------------------------
 
 async function GamesList({
   search,
@@ -98,9 +186,11 @@ async function GamesList({
   contentType,
   developer,
   publisher,
+  riskLevel,
   sort,
   order,
   activeFilters,
+  totalGames,
 }: {
   search: string;
   genre: string;
@@ -108,9 +198,11 @@ async function GamesList({
   contentType: string;
   developer: string;
   publisher: string;
+  riskLevel: string;
   sort: string;
   order: string;
   activeFilters: number;
+  totalGames: number;
 }) {
   let result;
   let errorMessage: string | null = null;
@@ -123,7 +215,8 @@ async function GamesList({
       contentType: contentType || undefined,
       developer: developer || undefined,
       publisher: publisher || undefined,
-      sort: (sort as "title" | "release_date") || undefined,
+      riskLevel: (riskLevel as EndangermentLevel) || undefined,
+      sort: (sort as "title" | "release_date" | "risk_score") || undefined,
       order: (order as "asc" | "desc") || undefined,
     });
   } catch (err) {
@@ -147,7 +240,7 @@ async function GamesList({
           Showing {result.total} game{result.total !== 1 ? "s" : ""}
           {activeFilters > 0 && (
             <span className="ml-1">
-              (filtered from 2,129)
+              (filtered from {totalGames.toLocaleString()})
             </span>
           )}
         </p>
@@ -158,6 +251,10 @@ async function GamesList({
     </>
   );
 }
+
+// ---------------------------------------------------------------------------
+// Empty / Error / Skeleton States
+// ---------------------------------------------------------------------------
 
 function EmptyState({
   query,

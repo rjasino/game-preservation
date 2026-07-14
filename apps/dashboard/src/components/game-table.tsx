@@ -1,0 +1,323 @@
+"use client";
+
+import { useState } from "react";
+import type { Game } from "@/lib/types";
+
+interface GameTableProps {
+  games: Game[];
+}
+
+export function GameTable({ games }: GameTableProps) {
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+
+  if (games.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-zinc-500">
+        <svg
+          className="mb-4 h-12 w-12"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+          />
+        </svg>
+        <p className="text-lg font-medium">No games found</p>
+        <p className="text-sm">Try adjusting your search or filters.</p>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="overflow-x-auto rounded-lg border border-zinc-200 bg-white shadow-sm">
+        <table className="w-full text-left text-sm">
+          <thead>
+            <tr className="border-b border-zinc-200 bg-zinc-50">
+              <th className="px-4 py-3 font-semibold text-zinc-700">Cover</th>
+              <th className="px-4 py-3 font-semibold text-zinc-700">Name</th>
+              <th className="px-4 py-3 font-semibold text-zinc-700">Genre</th>
+              <th className="px-4 py-3 font-semibold text-zinc-700">Platform</th>
+            </tr>
+          </thead>
+          <tbody>
+            {games.map((game) => (
+              <tr
+                key={game.id}
+                onClick={() => setSelectedGame(game)}
+                className="cursor-pointer border-b border-zinc-100 transition-colors hover:bg-zinc-50"
+                tabIndex={0}
+                role="button"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setSelectedGame(game);
+                  }
+                }}
+              >
+                <td className="px-4 py-3">
+                  {game.cover_url ? (
+                    <img
+                      src={game.cover_url}
+                      alt={`${game.name} cover`}
+                      className="h-16 w-12 rounded object-cover ring-1 ring-zinc-200"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="flex h-16 w-12 items-center justify-center rounded bg-zinc-100 text-xs text-zinc-400 ring-1 ring-zinc-200">
+                      N/A
+                    </div>
+                  )}
+                </td>
+                <td className="max-w-64 px-4 py-3 font-medium text-zinc-900 truncate">
+                  {game.name}
+                </td>
+                <td className="px-4 py-3 text-zinc-600">
+                  {game.genres.length > 0
+                    ? game.genres.join(", ")
+                    : "\u2014"}
+                </td>
+                <td className="px-4 py-3">
+                  <span className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
+                    PS Vita
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p className="mt-3 text-xs text-zinc-400">
+        Showing {games.length} game{games.length !== 1 ? "s" : ""}
+      </p>
+
+      {selectedGame && (
+        <GameDetailModal
+          game={selectedGame}
+          onClose={() => setSelectedGame(null)}
+        />
+      )}
+    </>
+  );
+}
+
+function GameDetailModal({
+  game,
+  onClose,
+}: {
+  game: Game;
+  onClose: () => void;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Details for ${game.name}`}
+    >
+      <div
+        className="relative max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-zinc-200 bg-white/95 px-6 py-4 backdrop-blur-sm">
+          <div className="flex items-center gap-4">
+            {game.cover_url ? (
+              <img
+                src={game.cover_url}
+                alt={`${game.name} cover`}
+                className="h-24 w-18 flex-shrink-0 rounded-lg object-cover ring-1 ring-zinc-200"
+              />
+            ) : (
+              <div className="flex h-24 w-18 flex-shrink-0 items-center justify-center rounded-lg bg-zinc-100 text-xs text-zinc-400 ring-1 ring-zinc-200">
+                No Cover
+              </div>
+            )}
+            <div className="min-w-0">
+              <h2 className="text-xl font-bold text-zinc-900 break-words">
+                {game.name}
+              </h2>
+              <span className="mt-0.5 inline-flex items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
+                PS Vita
+              </span>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="flex-shrink-0 rounded-lg p-1.5 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600"
+            aria-label="Close"
+          >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="space-y-5 px-6 py-5">
+          {/* Summary */}
+          {game.summary && (
+            <section>
+              <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                Summary
+              </h3>
+              <p className="text-sm leading-relaxed text-zinc-700">
+                {game.summary}
+              </p>
+            </section>
+          )}
+
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            {/* Rating */}
+            <section>
+              <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                Rating
+              </h3>
+              {game.rating !== null ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-lg font-bold text-zinc-900">
+                    {game.rating.toFixed(0)}%
+                  </span>
+                  <span className="text-xs text-zinc-400">
+                    ({game.rating_count} review{game.rating_count !== 1 ? "s" : ""})
+                  </span>
+                </div>
+              ) : (
+                <p className="text-sm text-zinc-400">Not rated</p>
+              )}
+            </section>
+
+            {/* Release Date */}
+            <section>
+              <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                First Release
+              </h3>
+              <p className="text-sm text-zinc-700">
+                {game.first_release_date > 0
+                  ? new Date(game.first_release_date * 1000).toLocaleDateString(
+                      "en-US",
+                      { year: "numeric", month: "long", day: "numeric" }
+                    )
+                  : "Unknown"}
+              </p>
+            </section>
+          </div>
+
+          {/* Genres */}
+          <section>
+            <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              Genre{game.genres.length !== 1 ? "s" : ""}
+            </h3>
+            <div className="flex flex-wrap gap-1.5">
+              {game.genres.length > 0
+                ? game.genres.map((genre) => (
+                    <span
+                      key={genre}
+                      className="inline-flex rounded-md bg-zinc-100 px-2 py-1 text-xs font-medium text-zinc-700"
+                    >
+                      {genre}
+                    </span>
+                  ))
+                : <span className="text-sm text-zinc-400">\u2014</span>}
+            </div>
+          </section>
+
+          {/* Themes */}
+          <section>
+            <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              Theme{game.themes.length !== 1 ? "s" : ""}
+            </h3>
+            <div className="flex flex-wrap gap-1.5">
+              {game.themes.length > 0
+                ? game.themes.map((theme) => (
+                    <span
+                      key={theme}
+                      className="inline-flex rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10"
+                    >
+                      {theme}
+                    </span>
+                  ))
+                : <span className="text-sm text-zinc-400">\u2014</span>}
+            </div>
+          </section>
+
+          {/* Game Modes */}
+          <section>
+            <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              Game Mode{game.game_modes.length !== 1 ? "s" : ""}
+            </h3>
+            <div className="flex flex-wrap gap-1.5">
+              {game.game_modes.length > 0
+                ? game.game_modes.map((mode) => (
+                    <span
+                      key={mode}
+                      className="inline-flex rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-700/10"
+                    >
+                      {mode}
+                    </span>
+                  ))
+                : <span className="text-sm text-zinc-400">\u2014</span>}
+            </div>
+          </section>
+
+          {/* Releases */}
+          <section>
+            <h3 className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              Release{game.releases.length !== 1 ? "s" : ""}
+            </h3>
+            <div className="max-h-40 overflow-y-auto rounded-lg border border-zinc-200">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr className="border-b border-zinc-200 bg-zinc-50">
+                    <th className="px-3 py-2 text-left font-medium text-zinc-600">
+                      Date
+                    </th>
+                    <th className="px-3 py-2 text-left font-medium text-zinc-600">
+                      Region
+                    </th>
+                    <th className="px-3 py-2 text-left font-medium text-zinc-600">
+                      Type
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {game.releases.map((release, i) => (
+                    <tr
+                      key={`${release.date}-${release.region}-${i}`}
+                      className="border-b border-zinc-100 last:border-0"
+                    >
+                      <td className="px-3 py-2 text-zinc-700">{release.date}</td>
+                      <td className="px-3 py-2 text-zinc-500">{release.region}</td>
+                      <td className="px-3 py-2 text-zinc-500 capitalize">{release.type}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          {/* External link */}
+          <section>
+            <a
+              href={game.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-zinc-100 px-3 py-2 text-xs font-medium text-zinc-700 transition-colors hover:bg-zinc-200"
+            >
+              View on IGDB
+              <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+}

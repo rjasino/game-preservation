@@ -5,12 +5,14 @@ import {
   getUniqueDevelopers,
   getUniquePublishers,
   getRiskLevelCounts,
+  getVitaExclusiveCount,
 } from "@/lib/data";
 import { getSavedCount } from "@/lib/db";
 import type { EndangermentLevel } from "@/lib/types";
 import { getRiskLevelColors, RISK_LEVEL_ORDER } from "@/lib/preservation";
 import { GameTable } from "@/components/game-table";
 import { SearchInput } from "@/components/search-input";
+import { IdSearchInput } from "@/components/id-search-input";
 import { FilterBar } from "@/components/filter-bar";
 import { SortSelect } from "@/components/sort-select";
 import { PaginationControls } from "@/components/pagination-controls";
@@ -38,6 +40,8 @@ interface PageProps {
     size?: string;
     salvaged?: string;
     saved?: string;
+    id?: string;
+    vita_exclusive?: string;
   }>;
 }
 
@@ -55,6 +59,8 @@ export default async function DashboardPage({ searchParams }: PageProps) {
     size: sizeRaw,
     salvaged = "",
     saved: savedRaw = "",
+    id: idRaw = "",
+    vita_exclusive: vitaExclusiveRaw = "",
   } = params;
 
   const page = parsePage(pageRaw);
@@ -62,13 +68,17 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   const salvagedMode: "all" | "exclude" | "only" =
     salvaged === "exclude" ? "exclude" : salvaged === "only" ? "only" : "all";
   const savedOnly = savedRaw === "1" || savedRaw === "true";
+  const gameId = idRaw ? Number(idRaw) : undefined;
+  const vitaExclusiveOnly =
+    vitaExclusiveRaw === "1" || vitaExclusiveRaw === "true";
 
-  // Load filter options, risk counts, and saved count
+  // Load filter options, risk counts, saved count, and vita-exclusive count
   const genres = await getUniqueGenres();
   const developers = await getUniqueDevelopers();
   const publishers = await getUniquePublishers();
   const riskCounts = await getRiskLevelCounts();
   const savedCount = getSavedCount();
+  const vitaExclusiveCount = await getVitaExclusiveCount();
 
   const totalGames =
     riskCounts.Critical +
@@ -84,6 +94,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
     publisher,
     riskLevel,
     savedOnly ? "saved" : "",
+    vitaExclusiveOnly ? "vita_exclusive" : "",
   ].filter(Boolean).length;
 
   return (
@@ -173,6 +184,34 @@ export default async function DashboardPage({ searchParams }: PageProps) {
               )}
             </a>
           </div>
+
+          {/* Vita Exclusive filter toggle */}
+          <div className="flex rounded-lg border border-zinc-200 bg-zinc-50 p-0.5 text-xs">
+            <a
+              href={`?${buildParamString(params, "vita_exclusive", "")}`}
+              className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
+                !vitaExclusiveOnly
+                  ? "bg-white text-zinc-900 shadow-sm ring-1 ring-zinc-200"
+                  : "text-zinc-500 hover:text-zinc-700"
+              }`}
+            >
+              All
+            </a>
+            <a
+              href={`?${buildParamString(params, "vita_exclusive", "1")}`}
+              className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
+                vitaExclusiveOnly
+                  ? "bg-blue-100 text-blue-700 shadow-sm ring-1 ring-blue-200"
+                  : "text-zinc-500 hover:text-zinc-700"
+              }`}
+              title="Show only games released exclusively on PlayStation Vita"
+            >
+              Vita Exclusive
+              <span className="ml-1 tabular-nums opacity-75">
+                ({vitaExclusiveCount})
+              </span>
+            </a>
+          </div>
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
           {RISK_LEVEL_ORDER.map((level) => {
@@ -206,7 +245,12 @@ export default async function DashboardPage({ searchParams }: PageProps) {
 
       {/* Search + Filter Bar */}
       <div className="mb-6 space-y-4">
-        <SearchInput defaultValue={q} />
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <SearchInput defaultValue={q} />
+          </div>
+          <IdSearchInput defaultValue={idRaw ?? ""} />
+        </div>
         <FilterBar
           genres={genres}
           developers={developers}
@@ -219,6 +263,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
       <Suspense fallback={<TableSkeleton />}>
         <GamesList
           search={q}
+          gameId={gameId}
           genre={genre}
           developer={developer}
           publisher={publisher}
@@ -229,6 +274,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           pageSize={pageSize}
           salvagedMode={salvagedMode}
           savedOnly={savedOnly}
+          vitaExclusiveOnly={vitaExclusiveOnly}
           activeFilters={activeFilters}
           totalGames={totalGames}
         />
@@ -261,6 +307,7 @@ function buildParamString(
 
 async function GamesList({
   search,
+  gameId,
   genre,
   developer,
   publisher,
@@ -271,10 +318,12 @@ async function GamesList({
   pageSize,
   salvagedMode,
   savedOnly,
+  vitaExclusiveOnly,
   activeFilters,
   totalGames,
 }: {
   search: string;
+  gameId: number | undefined;
   genre: string;
   developer: string;
   publisher: string;
@@ -285,6 +334,7 @@ async function GamesList({
   pageSize: number;
   salvagedMode: "all" | "exclude" | "only";
   savedOnly: boolean;
+  vitaExclusiveOnly: boolean;
   activeFilters: number;
   totalGames: number;
 }) {
@@ -293,7 +343,8 @@ async function GamesList({
 
   try {
     result = await queryGames({
-      search,
+      search: search || undefined,
+      id: gameId,
       genre: genre || undefined,
       developer: developer || undefined,
       publisher: publisher || undefined,
@@ -304,6 +355,7 @@ async function GamesList({
       pageSize,
       salvaged: salvagedMode,
       savedOnly: savedOnly || undefined,
+      vitaExclusiveOnly: vitaExclusiveOnly || undefined,
     });
   } catch (err) {
     errorMessage =

@@ -34,6 +34,8 @@ export function FilterBar({
       } else {
         params.delete(key);
       }
+      // Reset page when filter changes
+      params.delete("page");
       startTransition(() => {
         router.push(`?${params.toString()}`);
       });

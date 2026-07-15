@@ -20,6 +20,10 @@ export function SearchInput({ defaultValue }: SearchInputProps) {
       } else {
         params.delete("q");
       }
+      // Reset page when search changes so results always start from page 1.
+      // Also clear the explicit ID param if the user switches to name search.
+      params.delete("page");
+      params.delete("id");
       startTransition(() => {
         router.push(`?${params.toString()}`);
       });
@@ -46,7 +50,7 @@ export function SearchInput({ defaultValue }: SearchInputProps) {
         type="text"
         defaultValue={defaultValue}
         onChange={(e) => handleChange(e.target.value)}
-        placeholder="Search games by name\u2026"
+        placeholder="Search by name or IGDB ID\u2026"
         className="w-full rounded-lg border border-zinc-300 bg-white py-2.5 pl-9 pr-4 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-200"
       />
       {isPending && (

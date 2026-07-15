@@ -11,6 +11,18 @@ import type {
 import { assessEndangerment, RISK_LEVEL_ORDER } from "./preservation";
 import { getSavedGameIds, getSavedCount } from "./db";
 
+/**
+ * Normalize text for search: lowercase and strip punctuation so that
+ * e.g. "Shinobido 2 Revenge of Zen" matches "Shinobido 2: Revenge of Zen".
+ */
+export function normalizeForSearch(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[:\-–—'’&,()\[\]!.\/]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 let cachedData: GamesData | null = null;
 let cachedEnrichment: Record<number, GameEnrichment> | null = null;
 
@@ -208,6 +220,30 @@ export async function getRiskLevelCounts(): Promise<RiskLevelCounts> {
 }
 
 // ---------------------------------------------------------------------------
+// Vita Exclusive Count
+// ---------------------------------------------------------------------------
+
+/**
+ * Count how many games are PS Vita exclusives
+ * (only platform is "PlayStation Vita").
+ */
+export async function getVitaExclusiveCount(): Promise<number> {
+  const data = await loadGames();
+  let count = 0;
+
+  for (const game of data.games) {
+    if (
+      game.platforms.length === 1 &&
+      game.platforms[0] === "PlayStation Vita"
+    ) {
+      count++;
+    }
+  }
+
+  return count;
+}
+
+// ---------------------------------------------------------------------------
 // Game Enrichment
 // ---------------------------------------------------------------------------
 
@@ -243,8 +279,10 @@ export function enrichGames(
 // ---------------------------------------------------------------------------
 
 export interface GameQuery {
-  /** Title search (case-insensitive substring match). */
+  /** Title search (case-insensitive, punctuation-normalised substring match). */
   search?: string;
+  /** Exact match on IGDB game id. */
+  id?: number;
   /** Single genre filter (exact match). */
   genre?: string;
   /** Developer filter (exact match within the game's developers array). */
@@ -265,6 +303,11 @@ export interface GameQuery {
    * When true, only show games that are on the user's preservation watchlist.
    */
   savedOnly?: boolean;
+  /**
+   * When true, only show games that are PS Vita exclusives
+   * (the only platform is "PlayStation Vita").
+   */
+  vitaExclusiveOnly?: boolean;
   /** Sort field. */
   sort?: "title" | "release_date" | "risk_score";
   /** Sort order. */
@@ -304,10 +347,26 @@ export async function queryGames(query: GameQuery): Promise<GameQueryResult> {
     saved: savedIds.has(g.id),
   }));
 
-  // Apply title search
+  // Apply title search (punctuation-normalised) + ID match
   if (query.search) {
     const q = query.search.toLowerCase();
-    games = games.filter((g) => g.name.toLowerCase().includes(q));
+    const qNormalized = normalizeForSearch(q);
+
+    // If the query looks like a number, also try an exact ID match
+    const maybeId = Number(q);
+    const hasNumericQuery = Number.isFinite(maybeId) && q.length >= 1;
+
+    games = games.filter((g) => {
+      if (hasNumericQuery && g.id === maybeId) {
+        return true;
+      }
+      return normalizeForSearch(g.name).includes(qNormalized);
+    });
+  }
+
+  // Apply exact ID match (takes priority over name search when both provided)
+  if (query.id !== undefined) {
+    games = games.filter((g) => g.id === query.id);
   }
 
   // Apply genre filter (exact match within the game's genre array)
@@ -340,6 +399,15 @@ export async function queryGames(query: GameQuery): Promise<GameQueryResult> {
   // Apply saved-only filter
   if (query.savedOnly) {
     games = games.filter((g) => g.saved);
+  }
+
+  // Apply Vita-exclusive filter (only one platform: PlayStation Vita)
+  if (query.vitaExclusiveOnly) {
+    games = games.filter(
+      (g) =>
+        g.platforms.length === 1 &&
+        g.platforms[0] === "PlayStation Vita"
+    );
   }
 
   // Apply sorting — name is always a secondary tiebreaker.

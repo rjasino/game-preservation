@@ -6,6 +6,7 @@ import {
   getUniquePublishers,
   getRiskLevelCounts,
 } from "@/lib/data";
+import { getSavedCount } from "@/lib/db";
 import type { EndangermentLevel } from "@/lib/types";
 import { getRiskLevelColors, RISK_LEVEL_ORDER } from "@/lib/preservation";
 import { GameTable } from "@/components/game-table";
@@ -36,6 +37,7 @@ interface PageProps {
     page?: string;
     size?: string;
     salvaged?: string;
+    saved?: string;
   }>;
 }
 
@@ -52,19 +54,21 @@ export default async function DashboardPage({ searchParams }: PageProps) {
     page: pageRaw,
     size: sizeRaw,
     salvaged = "",
+    saved: savedRaw = "",
   } = params;
 
   const page = parsePage(pageRaw);
   const pageSize = parseSize(sizeRaw);
   const salvagedMode: "all" | "exclude" | "only" =
     salvaged === "exclude" ? "exclude" : salvaged === "only" ? "only" : "all";
+  const savedOnly = savedRaw === "1" || savedRaw === "true";
 
-
-  // Load filter options and risk counts
+  // Load filter options, risk counts, and saved count
   const genres = await getUniqueGenres();
   const developers = await getUniqueDevelopers();
   const publishers = await getUniquePublishers();
   const riskCounts = await getRiskLevelCounts();
+  const savedCount = getSavedCount();
 
   const totalGames =
     riskCounts.Critical +
@@ -79,6 +83,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
     developer,
     publisher,
     riskLevel,
+    savedOnly ? "saved" : "",
   ].filter(Boolean).length;
 
   return (
@@ -138,6 +143,36 @@ export default async function DashboardPage({ searchParams }: PageProps) {
               Salvaged Only
             </a>
           </div>
+
+          {/* Saved filter toggle */}
+          <div className="flex rounded-lg border border-zinc-200 bg-zinc-50 p-0.5 text-xs">
+            <a
+              href={`?${buildParamString(params, "saved", "")}`}
+              className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
+                !savedOnly
+                  ? "bg-white text-zinc-900 shadow-sm ring-1 ring-zinc-200"
+                  : "text-zinc-500 hover:text-zinc-700"
+              }`}
+            >
+              All
+            </a>
+            <a
+              href={`?${buildParamString(params, "saved", "1")}`}
+              className={`rounded-md px-2.5 py-1 font-medium transition-colors ${
+                savedOnly
+                  ? "bg-amber-100 text-amber-700 shadow-sm ring-1 ring-amber-200"
+                  : "text-zinc-500 hover:text-zinc-700"
+              }`}
+              title="Show only games marked for preservation"
+            >
+              Saved Only
+              {savedCount > 0 && (
+                <span className="ml-1 tabular-nums opacity-75">
+                  ({savedCount})
+                </span>
+              )}
+            </a>
+          </div>
         </div>
         <div className="mt-3 flex flex-wrap gap-2">
           {RISK_LEVEL_ORDER.map((level) => {
@@ -193,6 +228,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           page={page}
           pageSize={pageSize}
           salvagedMode={salvagedMode}
+          savedOnly={savedOnly}
           activeFilters={activeFilters}
           totalGames={totalGames}
         />
@@ -234,6 +270,7 @@ async function GamesList({
   page,
   pageSize,
   salvagedMode,
+  savedOnly,
   activeFilters,
   totalGames,
 }: {
@@ -247,6 +284,7 @@ async function GamesList({
   page: number;
   pageSize: number;
   salvagedMode: "all" | "exclude" | "only";
+  savedOnly: boolean;
   activeFilters: number;
   totalGames: number;
 }) {
@@ -265,6 +303,7 @@ async function GamesList({
       page,
       pageSize,
       salvaged: salvagedMode,
+      savedOnly: savedOnly || undefined,
     });
   } catch (err) {
     errorMessage =

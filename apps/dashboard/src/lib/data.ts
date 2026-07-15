@@ -9,6 +9,7 @@ import type {
   GameEnrichment,
 } from "./types";
 import { assessEndangerment, RISK_LEVEL_ORDER } from "./preservation";
+import { getSavedGameIds, getSavedCount } from "./db";
 
 let cachedData: GamesData | null = null;
 let cachedEnrichment: Record<number, GameEnrichment> | null = null;
@@ -232,6 +233,7 @@ export function enrichGames(
       exclusion_reason:
         game.exclusion_reason ?? gameEnrichment?.exclusion_reason,
       endangerment,
+      saved: false,
     };
   });
 }
@@ -259,6 +261,10 @@ export interface GameQuery {
    *   - "only"              — show ONLY salvaged games
    */
   salvaged?: "all" | "exclude" | "only";
+  /**
+   * When true, only show games that are on the user's preservation watchlist.
+   */
+  savedOnly?: boolean;
   /** Sort field. */
   sort?: "title" | "release_date" | "risk_score";
   /** Sort order. */
@@ -291,6 +297,13 @@ export async function queryGames(query: GameQuery): Promise<GameQueryResult> {
   const enrichment = await loadEnrichment();
   let games = enrichGames(data.games, enrichment);
 
+  // Load saved game IDs from the database and mark games accordingly
+  const savedIds = getSavedGameIds();
+  games = games.map((g) => ({
+    ...g,
+    saved: savedIds.has(g.id),
+  }));
+
   // Apply title search
   if (query.search) {
     const q = query.search.toLowerCase();
@@ -322,6 +335,11 @@ export async function queryGames(query: GameQuery): Promise<GameQueryResult> {
     games = games.filter((g) => !g.endangerment.salvagedByModernVersion);
   } else if (query.salvaged === "only") {
     games = games.filter((g) => g.endangerment.salvagedByModernVersion);
+  }
+
+  // Apply saved-only filter
+  if (query.savedOnly) {
+    games = games.filter((g) => g.saved);
   }
 
   // Apply sorting — name is always a secondary tiebreaker.

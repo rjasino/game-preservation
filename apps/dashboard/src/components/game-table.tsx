@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { EnrichedGame } from "@/lib/types";
 import { getRiskLevelColors } from "@/lib/preservation";
+import { SaveButton } from "@/components/save-button";
 
 interface GameTableProps {
   games: EnrichedGame[];
@@ -39,6 +40,9 @@ export function GameTable({ games }: GameTableProps) {
         <table className="w-full text-left text-sm">
           <thead>
             <tr className="border-b border-zinc-200 bg-zinc-50">
+              <th className="w-10 px-3 py-3">
+                <span className="sr-only">Saved</span>
+              </th>
               <th className="px-4 py-3 font-semibold text-zinc-700">Cover</th>
               <th className="px-4 py-3 font-semibold text-zinc-700">Name</th>
               <th className="px-4 py-3 font-semibold text-zinc-700">Risk</th>
@@ -68,6 +72,9 @@ export function GameTable({ games }: GameTableProps) {
                   }
                 }}
               >
+                <td className="px-3 py-3">
+                  <SaveButton gameId={game.id} saved={game.saved} />
+                </td>
                 <td className="px-4 py-3">
                   {game.cover_url ? (
                     <img

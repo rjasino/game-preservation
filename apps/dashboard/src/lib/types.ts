@@ -147,6 +147,8 @@ export interface EndangermentAssessment {
  */
 export interface EnrichedGame extends Game {
   endangerment: EndangermentAssessment;
+  /** Whether this game is on the user's preservation watchlist. */
+  saved: boolean;
 }
 
 // ---------------------------------------------------------------------------

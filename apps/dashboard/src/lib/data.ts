@@ -7,9 +7,16 @@ import type {
   EnrichedGame,
   EnrichmentData,
   GameEnrichment,
+  GameListInfo,
 } from "./types";
 import { assessEndangerment, RISK_LEVEL_ORDER } from "./preservation";
-import { getSavedGameIds, getSavedCount } from "./db";
+import {
+  getSavedGameIds,
+  getSavedCount,
+  getAllLists,
+  getAllGameListMappings,
+  getGameIdsInList,
+} from "./db";
 
 /**
  * Normalize text for search: lowercase and strip punctuation so that
@@ -270,6 +277,7 @@ export function enrichGames(
         game.exclusion_reason ?? gameEnrichment?.exclusion_reason,
       endangerment,
       saved: false,
+      listIds: [],
     };
   });
 }
@@ -301,8 +309,13 @@ export interface GameQuery {
   salvaged?: "all" | "exclude" | "only";
   /**
    * When true, only show games that are on the user's preservation watchlist.
+   * (True when the game belongs to ANY list.)
    */
   savedOnly?: boolean;
+  /**
+   * When set, only show games that belong to a specific list (by list ID).
+   */
+  listId?: number;
   /**
    * When true, only show games that are PS Vita exclusives
    * (the only platform is "PlayStation Vita").
@@ -340,12 +353,17 @@ export async function queryGames(query: GameQuery): Promise<GameQueryResult> {
   const enrichment = await loadEnrichment();
   let games = enrichGames(data.games, enrichment);
 
-  // Load saved game IDs from the database and mark games accordingly
-  const savedIds = getSavedGameIds();
-  games = games.map((g) => ({
-    ...g,
-    saved: savedIds.has(g.id),
-  }));
+  // Load list memberships from the database and mark games accordingly.
+  // This replaces the old simple saved/unsaved flag with full list membership.
+  const listMappings = getAllGameListMappings();
+  games = games.map((g) => {
+    const gameListIds = listMappings.get(g.id);
+    return {
+      ...g,
+      listIds: gameListIds ? Array.from(gameListIds) : [],
+      saved: gameListIds ? gameListIds.size > 0 : false,
+    };
+  });
 
   // Apply title search (punctuation-normalised) + ID match
   if (query.search) {
@@ -399,6 +417,11 @@ export async function queryGames(query: GameQuery): Promise<GameQueryResult> {
   // Apply saved-only filter
   if (query.savedOnly) {
     games = games.filter((g) => g.saved);
+  }
+
+  // Apply specific-list filter
+  if (query.listId !== undefined) {
+    games = games.filter((g) => g.listIds.includes(query.listId!));
   }
 
   // Apply Vita-exclusive filter (only one platform: PlayStation Vita)
@@ -462,4 +485,20 @@ export async function queryGames(query: GameQuery): Promise<GameQueryResult> {
   const paged = games.slice(start, start + pageSize);
 
   return { games: paged, total, page, pageSize, totalPages };
+}
+
+// ---------------------------------------------------------------------------
+// List helpers for the page
+// ---------------------------------------------------------------------------
+
+/**
+ * Return all user-created lists, formatted for client components.
+ */
+export function getListsForUI(): GameListInfo[] {
+  return getAllLists().map((l) => ({
+    id: l.id,
+    name: l.name,
+    color: l.color,
+    gameCount: l.game_count,
+  }));
 }

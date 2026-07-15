@@ -147,8 +147,22 @@ export interface EndangermentAssessment {
  */
 export interface EnrichedGame extends Game {
   endangerment: EndangermentAssessment;
-  /** Whether this game is on the user's preservation watchlist. */
+  /** True when the game is in at least one user-created list. */
   saved: boolean;
+  /** IDs of all lists this game belongs to. */
+  listIds: number[];
+}
+
+// ---------------------------------------------------------------------------
+// List Types
+// ---------------------------------------------------------------------------
+
+/** Lightweight list info passed from server to client components. */
+export interface GameListInfo {
+  id: number;
+  name: string;
+  color: string;
+  gameCount: number;
 }
 
 // ---------------------------------------------------------------------------

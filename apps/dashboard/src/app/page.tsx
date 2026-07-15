@@ -6,14 +6,17 @@ import {
   getUniquePublishers,
   getRiskLevelCounts,
   getVitaExclusiveCount,
+  getListsForUI,
 } from "@/lib/data";
 import { getSavedCount } from "@/lib/db";
-import type { EndangermentLevel } from "@/lib/types";
+import type { EndangermentLevel, GameListInfo } from "@/lib/types";
 import { getRiskLevelColors, RISK_LEVEL_ORDER } from "@/lib/preservation";
 import { GameTable } from "@/components/game-table";
 import { SearchInput } from "@/components/search-input";
 import { IdSearchInput } from "@/components/id-search-input";
 import { FilterBar } from "@/components/filter-bar";
+import { ListFilter } from "@/components/list-filter";
+import { ListManager } from "@/components/list-manager";
 import { SortSelect } from "@/components/sort-select";
 import { PaginationControls } from "@/components/pagination-controls";
 
@@ -42,6 +45,7 @@ interface PageProps {
     saved?: string;
     id?: string;
     vita_exclusive?: string;
+    list?: string;
   }>;
 }
 
@@ -61,6 +65,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
     saved: savedRaw = "",
     id: idRaw = "",
     vita_exclusive: vitaExclusiveRaw = "",
+    list: listRaw = "",
   } = params;
 
   const page = parsePage(pageRaw);
@@ -71,14 +76,16 @@ export default async function DashboardPage({ searchParams }: PageProps) {
   const gameId = idRaw ? Number(idRaw) : undefined;
   const vitaExclusiveOnly =
     vitaExclusiveRaw === "1" || vitaExclusiveRaw === "true";
+  const listId = listRaw ? Number(listRaw) : null;
 
-  // Load filter options, risk counts, saved count, and vita-exclusive count
+  // Load filter options, risk counts, saved count, vita-exclusive count, and lists
   const genres = await getUniqueGenres();
   const developers = await getUniqueDevelopers();
   const publishers = await getUniquePublishers();
   const riskCounts = await getRiskLevelCounts();
   const savedCount = getSavedCount();
   const vitaExclusiveCount = await getVitaExclusiveCount();
+  const lists = getListsForUI();
 
   const totalGames =
     riskCounts.Critical +
@@ -95,6 +102,7 @@ export default async function DashboardPage({ searchParams }: PageProps) {
     riskLevel,
     savedOnly ? "saved" : "",
     vitaExclusiveOnly ? "vita_exclusive" : "",
+    listId ? "list" : "",
   ].filter(Boolean).length;
 
   return (
@@ -257,6 +265,12 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           publishers={publishers}
           riskLevelCounts={riskCounts}
         />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <ListFilter lists={lists} currentListId={listId} />
+          <div className="flex items-end">
+            <ListManager lists={lists} />
+          </div>
+        </div>
       </div>
 
       {/* Results */}
@@ -275,6 +289,8 @@ export default async function DashboardPage({ searchParams }: PageProps) {
           salvagedMode={salvagedMode}
           savedOnly={savedOnly}
           vitaExclusiveOnly={vitaExclusiveOnly}
+          listId={listId}
+          lists={lists}
           activeFilters={activeFilters}
           totalGames={totalGames}
         />
@@ -319,6 +335,8 @@ async function GamesList({
   salvagedMode,
   savedOnly,
   vitaExclusiveOnly,
+  listId,
+  lists,
   activeFilters,
   totalGames,
 }: {
@@ -335,6 +353,8 @@ async function GamesList({
   salvagedMode: "all" | "exclude" | "only";
   savedOnly: boolean;
   vitaExclusiveOnly: boolean;
+  listId: number | null;
+  lists: GameListInfo[];
   activeFilters: number;
   totalGames: number;
 }) {
@@ -356,6 +376,7 @@ async function GamesList({
       salvaged: salvagedMode,
       savedOnly: savedOnly || undefined,
       vitaExclusiveOnly: vitaExclusiveOnly || undefined,
+      listId: listId ?? undefined,
     });
   } catch (err) {
     errorMessage =
@@ -385,7 +406,7 @@ async function GamesList({
         <SortSelect />
       </div>
 
-      <GameTable games={result.games} />
+      <GameTable games={result.games} lists={lists} />
 
       {/* Pagination */}
       {result.totalPages > 1 && (

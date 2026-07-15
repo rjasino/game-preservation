@@ -17,11 +17,21 @@ import {
 function createTestDb(): Database.Database {
   const db = new Database(":memory:");
   db.pragma("journal_mode = WAL");
+  db.pragma("foreign_keys = ON");
   db.exec(`
-    CREATE TABLE IF NOT EXISTS saved_games (
-      game_id   INTEGER PRIMARY KEY,
-      saved_at  TEXT NOT NULL DEFAULT (datetime('now'))
-    )
+    CREATE TABLE IF NOT EXISTS game_lists (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      name       TEXT NOT NULL UNIQUE,
+      color      TEXT NOT NULL DEFAULT '#f59e0b',
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE TABLE IF NOT EXISTS game_list_items (
+      list_id  INTEGER NOT NULL,
+      game_id  INTEGER NOT NULL,
+      added_at TEXT NOT NULL DEFAULT (datetime('now')),
+      PRIMARY KEY (list_id, game_id),
+      FOREIGN KEY (list_id) REFERENCES game_lists(id) ON DELETE CASCADE
+    );
   `);
   return db;
 }

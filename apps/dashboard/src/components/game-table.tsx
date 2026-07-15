@@ -1,15 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import type { EnrichedGame } from "@/lib/types";
+import type { EnrichedGame, GameListInfo } from "@/lib/types";
 import { getRiskLevelColors } from "@/lib/preservation";
 import { SaveButton } from "@/components/save-button";
 
 interface GameTableProps {
   games: EnrichedGame[];
+  lists: GameListInfo[];
 }
 
-export function GameTable({ games }: GameTableProps) {
+export function GameTable({ games, lists }: GameTableProps) {
   const [selectedGame, setSelectedGame] = useState<EnrichedGame | null>(null);
 
   if (games.length === 0) {
@@ -73,7 +74,12 @@ export function GameTable({ games }: GameTableProps) {
                 }}
               >
                 <td className="px-3 py-3">
-                  <SaveButton gameId={game.id} saved={game.saved} />
+                  <SaveButton
+                    gameId={game.id}
+                    saved={game.saved}
+                    listIds={game.listIds}
+                    lists={lists}
+                  />
                 </td>
                 <td className="px-4 py-3">
                   {game.cover_url ? (
@@ -89,8 +95,41 @@ export function GameTable({ games }: GameTableProps) {
                     </div>
                   )}
                 </td>
-                <td className="max-w-64 px-4 py-3 font-medium text-zinc-900 truncate">
-                  {game.name}
+                <td className="max-w-64 px-4 py-3">
+                  <span className="font-medium text-zinc-900 truncate block">
+                    {game.name}
+                  </span>
+                  {game.listIds.length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {game.listIds.slice(0, 3).map((lid) => {
+                        const list = lists.find((l) => l.id === lid);
+                        if (!list) return null;
+                        return (
+                          <span
+                            key={lid}
+                            className="inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[10px] font-medium"
+                            style={{
+                              backgroundColor: `${list.color}18`,
+                              color: list.color,
+                              borderColor: `${list.color}40`,
+                            }}
+                            title={list.name}
+                          >
+                            <span
+                              className="h-1.5 w-1.5 rounded-full"
+                              style={{ backgroundColor: list.color }}
+                            />
+                            {list.name}
+                          </span>
+                        );
+                      })}
+                      {game.listIds.length > 3 && (
+                        <span className="text-[10px] text-zinc-400">
+                          +{game.listIds.length - 3}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </td>
                 <td className="px-4 py-3">
                   <RiskBadge

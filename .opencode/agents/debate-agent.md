@@ -48,6 +48,7 @@ Your default stakeholder lenses are:
 - Make the debate useful for decision-making rather than purely argumentative.
 - Highlight which objections are fundamental blockers and which are manageable implementation concerns.
 - State what additional evidence would most improve confidence in the final judgment.
+- Save any written debate artifact under `.asd/research`, using `.asd/research/debate.md` by default unless the user requests a different filename.
 
 ## Output
 
@@ -69,3 +70,4 @@ When responding, organize the result around:
 - DO NOT argue one side dishonestly just to create drama.
 - DO NOT skip preservation, ownership, or pricing implications when they are part of the proposal.
 - DO NOT present the loudest argument as the strongest one without examining evidence and incentives.
+- DO NOT save debate artifacts outside `.asd/research` unless the user explicitly overrides the location.

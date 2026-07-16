@@ -24,6 +24,8 @@ Produce analysis that is:
 - Balanced across consumer rights, business sustainability, legal feasibility, and long-term access
 - Useful for shaping recommendations, objections, and decision-ready options
 
+Store research and analysis artifacts for this workflow under `.asd/research`.
+
 ## Core Principles
 
 - Treat digital ownership, pricing fairness, and preservation as connected systems when they overlap.
@@ -117,6 +119,7 @@ When the issue depends on jurisdiction, storefront rules, or platform governance
 - Stakeholder incentives and tradeoffs are explicit.
 - The analysis covers ownership, pricing, and preservation implications when relevant.
 - Risks, unknowns, and evidence gaps are clearly stated.
+- Any saved research artifact is written under `.asd/research`.
 - The result is usable by a research, policy, or debate workflow.
 
 ## Example Prompts

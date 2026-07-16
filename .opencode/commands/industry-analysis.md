@@ -35,6 +35,8 @@ Run a simple two-stage workflow for gaming industry analysis:
 - Treat the debate stage as a stress test of the research outcome, not as a disconnected second answer.
 - If the debate uncovers a major flaw, revise the final recommendation accordingly.
 - If evidence is too weak for a firm recommendation, say so clearly and state the next research step.
+- Save all workflow artifacts under `.asd/research`.
+- Use `.asd/research/research.md` for the research stage, `.asd/research/debate.md` for the debate stage, and `.asd/research/industry-analysis.md` for the consolidated workflow result unless the user requests different filenames.
 
 ## Stage 1: Research
 
@@ -71,9 +73,12 @@ Return one combined response with these sections:
 - Evidence gaps
 - Next step
 
+Save the combined workflow artifact to `.asd/research/industry-analysis.md` unless the user requests a different filename.
+
 ## Constraints
 
 - Keep the workflow focused on gaming industry analysis.
 - Use the two agents in sequence rather than merging their roles into one generic answer.
 - Preserve disagreement when it matters instead of forcing false consensus.
 - Prefer concise decision-ready synthesis over long repetitive summaries.
+- Do not place research workflow artifacts in `.asd/artifacts`; reserve `.asd/research` for this workflow.

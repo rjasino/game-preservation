@@ -24,6 +24,33 @@
           "zsh-generator": "allow"
         }
       }
+    },
+    "web-app-developer": {
+      "permission": {
+        "skill": {
+          "nextjs-logic": "allow"
+        }
+      }
+    },
+    "speckit-agent": {
+      "permission": {
+        "read": "allow",
+        "edit": {
+          "*": "deny",
+          ".specify/**": "allow",
+          ".opencode/**": "allow"
+        },
+        "grep": "allow",
+        "glob": "allow",
+        "bash": {
+          "*": "ask",
+          ".specify/scripts/powershell/*": "allow",
+          "pwsh .specify/scripts/powershell/*": "allow",
+          "powershell .specify/scripts/powershell/*": "allow",
+          "git status*": "allow",
+          "git diff*": "allow"
+        }
+      }
     }
   }
 }

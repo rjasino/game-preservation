@@ -38,18 +38,13 @@
         "edit": {
           "*": "deny",
           ".specify/**": "allow",
-          ".opencode/**": "allow"
+          ".opencode/**": "allow",
+          "apps/**": "allow",
+          "apps/dashboard/**": "deny"
         },
         "grep": "allow",
         "glob": "allow",
-        "bash": {
-          "*": "ask",
-          ".specify/scripts/powershell/*": "allow",
-          "pwsh .specify/scripts/powershell/*": "allow",
-          "powershell .specify/scripts/powershell/*": "allow",
-          "git status*": "allow",
-          "git diff*": "allow"
-        }
+        "bash": "allow"
       }
     }
   }

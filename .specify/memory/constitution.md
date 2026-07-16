@@ -1,25 +1,30 @@
 <!--
   Sync Impact Report
   ==================
-  Version change: [TEMPLATE] → 1.0.0 (initial ratification) → 1.0.1 (this amendment)
-  Modified principles: N/A (initial fill)
+  Version change: [TEMPLATE] → 1.0.0 → 1.0.1 → 1.1.0 (this amendment)
   v1.0.1 changes:
     - PATCH: Clarified prescriptive language (test runner wording).
     - Noted: apps/dashboard is a reference project; constitution governs the
       new app being built, not the reference code.
+  v1.1.0 changes (MINOR):
+    - Added: Project Structure section — all application code MUST live under
+      `apps/<app-name>/`. Constraints: TypeScript Next.js apps only in apps/.
+    - Migration note: `game-ako/` scaffold must be relocated to `apps/game-ako/`.
   Added sections:
     - Core Principles (5): Code Quality & Type Safety, Testing-First Discipline,
       User Experience Consistency, Performance by Default, Security & Data Integrity
     - Technical Standards (tech stack constraints)
+    - Project Structure (directory conventions)
     - Development Workflow (quality gates & review)
-  Removed sections: None (template placeholders replaced)
+  Removed sections: None
   Templates requiring updates:
-    - .specify/templates/plan-template.md       ✅ compatible (Constitution Check gate generic)
-    - .specify/templates/spec-template.md        ✅ compatible (Testing + Success Criteria align)
-    - .specify/templates/tasks-template.md       ⚠ note: "Tests are OPTIONAL" default overridden
-                                                   by Principle II at runtime; template itself OK
-    - .specify/templates/commands/               N/A (no command files exist)
-  Follow-up TODOs: None
+    - .specify/templates/plan-template.md       ✅ compatible
+    - .specify/templates/spec-template.md        ✅ compatible
+    - .specify/templates/tasks-template.md       ✅ compatible (path conventions
+                                                   already document `apps/` layout)
+    - .specify/templates/commands/               N/A
+  Follow-up TODOs:
+    - Migrate `game-ako/` → `apps/game-ako/` (tracked in the scaffold feature plan)
 -->
 # Game Ako Chronicles Constitution
 
@@ -147,6 +152,41 @@ a written proposal approved through the amendment process.
 > utility and is exempt from TypeScript and Next.js constraints documented above.
 > Its own code-quality expectations are documented in the script header.
 
+## Project Structure
+
+All application source code for the Game Ako Chronicles project MUST reside
+under the `apps/` directory at the repository root. Each application occupies
+its own subdirectory named after the app: `apps/<app-name>/`.
+
+```
+apps/
+├── <app-name>/          # One app per subdirectory
+│   ├── package.json     # App-specific dependencies and scripts
+│   ├── tsconfig.json    # TypeScript config (strict mode)
+│   ├── next.config.ts   # Next.js configuration
+│   ├── vitest.config.ts # Test runner configuration
+│   ├── eslint.config.mjs
+│   ├── postcss.config.mjs
+│   └── src/             # Application source
+└── dashboard/           # Reference app (not the app being built)
+```
+
+**Rules**:
+
+- Every application subdirectory under `apps/` MUST be a self-contained
+  Next.js project with its own `package.json`, `tsconfig.json`, and
+  configuration files.
+- Shared code (types, utilities, database models) that spans multiple apps
+  MUST be extracted into a shared package under `packages/` — no
+  cross-app relative imports.
+- The `apps/dashboard/` directory is a reference project studied during
+  development; it is NOT the application being built and is exempt from the
+  constitution's quality gates.
+- Spec and planning artifacts live under `specs/` at the repository root,
+  outside the `apps/` tree.
+- Data ingestion scripts (Python) live under `.asd/artifacts/` and are
+  exempt from TypeScript and Next.js constraints.
+
 ## Development Workflow
 
 - **Branching**: Feature branches MUST branch from `main` and use the naming
@@ -182,4 +222,4 @@ favor of this constitution.
   Violations that cannot be resolved MUST be explicitly justified in the plan
   with a documented simpler alternative that was rejected and why.
 
-**Version**: 1.0.1 | **Ratified**: 2026-07-16 | **Last Amended**: 2026-07-16
+**Version**: 1.1.0 | **Ratified**: 2026-07-16 | **Last Amended**: 2026-07-16

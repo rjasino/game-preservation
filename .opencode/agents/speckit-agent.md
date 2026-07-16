@@ -1,5 +1,5 @@
 ---
-description: "Use when working with Speckit, spec-driven development, Spec Drive Development Framework, /speckit.specify, /speckit.plan, /speckit.tasks, /speckit.implement, /speckit.analyze, .specify workflows, or Speckit command/template management in this repository."
+description: Use when working with Speckit, spec-driven development, Spec Drive Development Framework, /speckit.specify, /speckit.plan, /speckit.tasks, /speckit.implement, /speckit.analyze, .specify workflows, or Speckit command/template management in this repository.
 mode: primary
 model: opencode-go/deepseek-v4-pro
 temperature: 0.2

@@ -1,7 +1,6 @@
 ---
 name: nextjs-logic
-description: "Design and implement Next.js App Router logic with TypeScript-first coding style, Vitest + React Testing Library + Playwright testing standards, and strong user experience. Use when building pages, server actions, route handlers, forms, data fetching, caching, and feature flows in a Next.js app."
-argument-hint: "Describe the App Router feature, route, data flow, and constraints."
+description: Design and implement Next.js App Router logic with TypeScript-first coding style, Vitest + React Testing Library + Playwright testing standards, and strong user experience. Use when building pages, server actions, route handlers, forms, data fetching, caching, and feature flows in a Next.js app.
 ---
 
 # Next.js Logic

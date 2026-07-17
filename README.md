@@ -1,197 +1,148 @@
-# PS Vita Games – IGDB Fetcher
+# Game Ako Chronicles
 
-Fetches **all PS Vita** games from the [IGDB API](https://api-docs.igdb.com/) and
-saves generated scripts and data under `.asd/artifacts`.
+A game preservation retrospective — chronicling the games that shaped us.
+Tracking risk levels, platform availability, and the fight to keep our digital
+history playable.
 
-## What It Does
+## Getting Started
 
-- Queries IGDB for **all** games released on PS Vita (`platforms = [46]`).
-- Excludes DLC and bundles (keeps main games only).
-- Filters for games that were released in the **English market** (Europe, North
-  America, Australia).
-- Includes all regional variants, ports, and re-releases.
-- Optionally fetches **Japan-only** games (games released in Japan but
-  never in an English-speaking region).
-- Adds metadata to help identify physical vs digital-only releases.
-- Outputs a clean JSON file with metadata, ratings, genres, cover art, and
-  release-date details.
+### Prerequisites
 
-## Prerequisites
+| Requirement | Version | How to verify |
+|-------------|---------|---------------|
+| Node.js | 18+ | `node --version` |
+| npm | 9+ | `npm --version` |
+| MongoDB | 7+ | `mongosh --eval "db.version()"` |
 
-| Requirement                    | How to get it                                                      |
-| ------------------------------ | ------------------------------------------------------------------ |
-| **Python**                     | 3.7 or newer. Download from [python.org](https://www.python.org/)  |
-| **requests**                   | `pip install requests`                                             |
-| **python-dotenv** _(optional)_ | `pip install python-dotenv` – only needed if you use a `.env` file |
+### Web App
 
-### How to install Python (Windows)
+The main application is a Next.js site under `apps/game-ako/`.
 
-1. Download the installer from [python.org/downloads](https://www.python.org/downloads/).
-2. Run the installer. **Check the box "Add Python to PATH"**.
-3. Open **Command Prompt** and verify:
-   ```
-   python --version
-   ```
-4. Install the required package:
-   ```
-   pip install requests
-   ```
+```bash
+cd apps/game-ako
+```
 
-## IGDB API Credentials
+#### Setup
 
-IGDB uses **Twitch OAuth**. You need to register a Twitch application at
+```bash
+# Install dependencies
+npm install
+
+# Create environment config (edit with your values)
+cp .env.local.example .env.local   # or create .env.local from scratch
+```
+
+Required environment variables in `.env.local`:
+
+| Variable | Description |
+|----------|-------------|
+| `MONGODB_URI` | MongoDB connection string |
+| `AUTH_SECRET` | Auth.js secret (`openssl rand -base64 32`) |
+| `AUTH_GOOGLE_ID` | Google OAuth client ID |
+| `AUTH_GOOGLE_SECRET` | Google OAuth client secret |
+| `ADMIN_EMAIL` | Pre-seeded admin email |
+| `ADMIN_PASSWORD` | Pre-seeded admin password |
+| `AUTH_URL` | Application URL (default: `http://localhost:3000`) |
+
+#### Seed the Admin Account
+
+```bash
+npm run seed
+```
+
+Creates the admin user if it doesn't already exist. Idempotent — safe to run
+on every deploy.
+
+#### Commands
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server on port 3000 |
+| `npm run build` | Production build |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint on all source files |
+| `npm test` | Run all tests (Vitest) |
+| `npm run test:watch` | Run tests in watch mode |
+| `npm run seed` | Seed the admin account |
+| `npm run healthcheck` | Validate toolchain is operational |
+
+#### Verification
+
+After seeding, open `http://localhost:3000` and:
+
+1. Visit `/register` to create an author account
+2. Visit `/login` to sign in (email/password or Google)
+3. Visit `/admin` as the seeded admin to access the review queue
+
+---
+
+## Data Ingestion (Python)
+
+The IGDB fetcher under `.asd/artifacts/` pulls PS Vita game metadata from the
+[IGDB API](https://api-docs.igdb.com/).
+
+### Prerequisites
+
+| Requirement | How to get it |
+|-------------|---------------|
+| Python 3.7+ | [python.org](https://www.python.org/) |
+| `requests` | `pip install requests` |
+| `python-dotenv` (optional) | `pip install python-dotenv` |
+
+### IGDB Credentials
+
+Register a Twitch app at
 [dev.twitch.tv](https://dev.twitch.tv/docs/authentication/register-app/)
-to get your credentials. There are **three** values involved:
+to get a **Client-ID** and **Client Secret**. Set them as environment variables
+or pass via CLI flags.
 
-| Credential        | What it is                           | Used for                                               |
-| ----------------- | ------------------------------------ | ------------------------------------------------------ |
-| **Client-ID**     | Public identifier of your Twitch app | Sent in every API request                              |
-| **Client Secret** | Private key _(keep this safe)_       | Exchanged **once** to generate a token                 |
-| **Bearer Token**  | A temporary access token             | Sent as `Authorization: Bearer <...>` in every request |
-
-> **The Client Secret is NOT the Bearer Token.**  
-> The secret is used just one time to obtain a token. Only the token (and the
-> Client-ID) are sent to IGDB with each request.
-
-### Easiest way: provide Client-ID + Client Secret
-
-The script will **auto-generate** the token for you so you never have to deal
-with tokens manually:
+### Usage
 
 ```bash
-python .asd/artifacts/fetch_ps_vita_games.py --client-id YOUR_CLIENT_ID --client-secret YOUR_CLIENT_SECRET
+# Auto-generate token from Client Secret
+python .asd/artifacts/fetch_ps_vita_games.py \
+  --client-id YOUR_CLIENT_ID \
+  --client-secret YOUR_CLIENT_SECRET
+
+# Japan-only games
+python .asd/artifacts/fetch_ps_vita_games.py \
+  --client-id YOUR_CLIENT_ID \
+  --client-secret YOUR_CLIENT_SECRET \
+  --japan-only
+
+# Custom output path and timeout
+python .asd/artifacts/fetch_ps_vita_games.py \
+  --client-id YOUR_CLIENT_ID \
+  --client-secret YOUR_CLIENT_SECRET \
+  --output vita_games.json \
+  --timeout 60
 ```
 
-### Alternative: provide a pre-existing Bearer Token
+### Flags
 
-If you already have a token (e.g. from the IGDB website or a previous OAuth
-exchange), supply it directly:
+| Flag | Description | Env Var |
+|------|-------------|---------|
+| `--client-id` | Twitch Client-ID **(required)** | `IGDB_CLIENT_ID` |
+| `--client-secret` | Twitch Client Secret | `IGDB_CLIENT_SECRET` |
+| `--token` | Pre-existing Bearer Token | `IGDB_TOKEN` |
+| `--japan-only` | Japan-exclusive games | — |
+| `--output` | Output JSON path | — |
+| `--timeout` | HTTP timeout in seconds (default: 30) | — |
 
-```bash
-python .asd/artifacts/fetch_ps_vita_games.py --client-id YOUR_CLIENT_ID --token YOUR_ACCESS_TOKEN
+The script auto-delays between pages to respect IGDB's ~4 req/s rate limit and
+retries on HTTP 429. Output is a JSON file with a `metadata` block and a
+`games` array containing ratings, genres, cover art, and release dates.
+
+---
+
+## Project Structure
+
 ```
-
-### Environment variables / `.env` file
-
-Create a `.env` file in the project root:
-
+game-preservation/
+├── apps/
+│   └── game-ako/          # Next.js web application
+├── .asd/artifacts/        # Python IGDB data fetcher
+├── specs/                 # Feature specifications and plans
+├── docs/                  # Project documentation
+└── .specify/              # Speckit workflow configuration
 ```
-IGDB_CLIENT_ID=YOUR_CLIENT_ID
-IGDB_CLIENT_SECRET=YOUR_CLIENT_SECRET
-```
-
-Or set them in your shell:
-
-```cmd
-set IGDB_CLIENT_ID=YOUR_CLIENT_ID
-set IGDB_CLIENT_SECRET=YOUR_CLIENT_SECRET
-python .asd/artifacts/fetch_ps_vita_games.py
-```
-
-The script resolves credentials in this order: **CLI flags → env vars → `.env`**.
-It checks `.env` in the project root first, then `.asd/artifacts`.
-
-## Usage
-
-```bash
-# Auto-generate token from Client Secret (recommended)
-python .asd/artifacts/fetch_ps_vita_games.py --client-id abc --client-secret xyz
-
-# Use a manually-obtained Bearer Token
-python .asd/artifacts/fetch_ps_vita_games.py --client-id abc --token xyz
-
-# Japan-only games (no English release)
-python .asd/artifacts/fetch_ps_vita_games.py --client-id abc --client-secret xyz --japan-only
-
-# Custom output path inside the artifact folder
-python .asd/artifacts/fetch_ps_vita_games.py --client-id abc --client-secret xyz --output vita_games.json
-
-# Increase HTTP timeout (useful on slow connections)
-python .asd/artifacts/fetch_ps_vita_games.py --client-id abc --client-secret xyz --timeout 60
-```
-
-### Full argument reference
-
-| Flag              | Description                                                                                    | Env var              |
-| ----------------- | ---------------------------------------------------------------------------------------------- | -------------------- |
-| `--client-id`     | IGDB / Twitch Client-ID **(required)**                                                         | `IGDB_CLIENT_ID`     |
-| `--client-secret` | Twitch Client Secret – script auto-generates a token                                           | `IGDB_CLIENT_SECRET` |
-| `--token`         | Pre-existing Bearer Token _(optional if secret given)_                                         | `IGDB_TOKEN`         |
-| `--japan-only`    | Japan-exclusive Vita games (no English release)                                                | —                    |
-| `--output`        | Output JSON file path _(default: `.asd/artifacts/ps_vita_games.json` for relative paths)_ | —                    |
-| `--timeout`       | HTTP request timeout in seconds _(default: 30)_                                                | —                    |
-
-> You must provide **either** `--client-secret` **or** `--token` (or their env
-> var equivalents). The script will auto-detect which one you used.
-
-## Output Format
-
-The JSON file contains a `metadata` block and a `games` array:
-
-```json
-{
-  "metadata": {
-    "source": "IGDB API v4",
-    "query": "PS Vita games (all releases; category filtered client-side)",
-    "mode": "English-market games",
-    "total": 150,
-    "note": "release_formats is best-effort based on IGDB metadata heuristics"
-  },
-  "games": [
-    {
-      "id": 1024,
-      "name": "Game Name",
-      "slug": "game-name",
-      "url": "https://www.igdb.com/games/game-name",
-      "summary": "Game description...",
-      "first_release_date": 1356998400,
-      "rating": 85.5,
-      "rating_count": 120,
-      "cover_url": "https://images.igdb.com/.../t_cover_big.jpg",
-      "genres": ["Adventure", "RPG"],
-      "themes": ["Fantasy"],
-      "game_modes": ["Single player"],
-      "platforms": ["PlayStation Vita"],
-      "developers": ["Studio Name"],
-      "publishers": ["Publisher Name"],
-      "is_version": false,
-      "version_title": "",
-      "release_formats": "physical_and_digital",
-      "releases": [
-        {
-          "date": "2012-12-17",
-          "region": "North America",
-          "status": "released"
-        },
-        {
-          "date": "2012-12-19",
-          "region": "Europe",
-          "status": "released"
-        }
-      ]
-    }
-  ]
-}
-```
-
-## Filtering Logic
-
-The script applies these criteria sequentially:
-
-| Step | Criterion                                        | Where applied      |
-| ---- | ------------------------------------------------ | ------------------ |
-| 1    | Platforms = `[46]` **only** (PS Vita games)      | IGDB server-side   |
-| 2    | `category = 0` (main game, not DLC / bundle)     | Client-side filter |
-| 3    | Released in Europe, North America, or Australia  | Client-side filter |
-| 4\*  | Released in Japan **and not** in English regions | Client-side filter |
-
-\* Only when `--japan-only` is used.
-
-## Notes
-
-- IGDB's free tier allows ~4 requests per second. The script automatically
-  adds a short delay between pages and retries on rate-limit (HTTP 429).
-- A total of 1 000–2 000 PS Vita games exist in IGDB. After filtering, expect
-  roughly **150–500** English-market games.
-- Cover-art URLs use the `t_cover_big` size. Replace with `t_1080p`,
-  `t_720p`, or `t_thumb` in the output file if you need a different size.

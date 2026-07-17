@@ -9,16 +9,22 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "healthcheck": "npx tsx scripts/healthcheck.ts"
+    "healthcheck": "npx tsx scripts/healthcheck.ts",
+    "seed": "npx tsx scripts/seed-admin.ts"
   },
   "dependencies": {
+    "@auth/mongodb-adapter": "^3.11.2",
     "@vitejs/plugin-react": "^6.0.3",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.4.2",
     "mongoose": "^9.7.4",
     "next": "16.2.10",
+    "next-auth": "^5.0.0-beta.31",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "vite-tsconfig-paths": "^6.1.1",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
